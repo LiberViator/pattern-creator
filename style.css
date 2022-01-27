@@ -1,9 +1,9 @@
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 :root {
@@ -15,11 +15,27 @@ html {
   -moz-osx-font-smoothing: grayscale;
   width: 100%;
   height: 100%;
+  pointer-events: none;
+  touch-action: none;
 }
 
 body {
   width: 100%;
   height: 100%;
+  /* pointer-events: none;
+  touch-action: none; */
+}
+
+#canvas {
+  background: darkgray;
+}
+
+#sandbox {
+  position: relative;
+  height: 50%;
+  width: 80%;
+  background: lightgray;
+  overflow: hidden;
 }
 
 .draggable {
@@ -30,6 +46,9 @@ body {
   width: 100px;
   height: 100px;
   background: gray;
+  fill: gray;
+  pointer-events: auto;
+  touch-action: auto;
 }
 
 /* Selector */
@@ -44,22 +63,39 @@ body {
   height: 100%;
   border: 2px solid var(--select-color);
   pointer-events: none;
+  touch-action: none;
 }
 
-.resize {
+.selector__resize {
   display: block;
   position: absolute;
-  width: 16px;
-  height: 16px;
-  background: white;
-  border: 2px solid var(--select-color);
-  border-radius: 50%;
   pointer-events: auto;
+  touch-action: auto;
 }
 
-.resize:hover {
-  background: var(--select-color);
+.selector__resize__vertical {
+  z-index: 99;
+  width: 100%;
+  height: 8px;
 }
+
+.selector__resize__horizontal {
+  z-index: 99;
+  width: 8px;
+  height: 100%;
+}
+
+.selector__resize__diagonal {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--select-color);
+  border-radius: 50%;
+  background: white;
+}
+
+/* .selector__resize__diagonal:hover {
+  background: var(--select-color);
+} */
 
 #topleft {
   top: -9px;
@@ -74,8 +110,8 @@ body {
 }
 
 #bottomright {
-  bottom: -9px;
   right: -9px;
+  bottom: -9px;
   cursor: nwse-resize;
 }
 
@@ -86,38 +122,34 @@ body {
 }
 
 #top {
-  top: -9px;
-  left: calc(50% - 8px);
+  top: -5px;
   cursor: row-resize;
 }
 
 #right {
-  top: calc(50% - 8px);
-  right: -9px;
+  right: -5px;
   cursor: col-resize;
 }
 
 #bottom {
-  bottom: -9px;
-  left: calc(50% - 8px);
+  bottom: -5px;
   cursor: row-resize;
 }
 
 #left {
-  top: calc(50% - 8px);
-  left: -9px;
+  left: -5px;
   cursor: col-resize;
 }
 
 #sizes {
   display: block;
   position: absolute;
-  width: max-content;
   bottom: -32px;
   left: 50%;
-  transform: translateX(-50%);
+  width: max-content;
   padding: 1px 8px;
-  background: #cccccc;
+  transform: translateX(-50%);
   border-radius: 8px;
+  background: #cccccc;
   font-size: 0.75rem;
 }

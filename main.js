@@ -1,97 +1,170 @@
+const body = document.querySelector('body');
 const sandbox = document.querySelector('#sandbox');
-const canvas = document.querySelector('#canvas');
-const ctx = canvas.getContext('2d');
 
-const isNavigation = function(target) {
-  if (target.classList.contains('navigation')) return true
-}
+// Selector
 var currentResizer;
 
-var activeElement;
+// Object
+var activeObject;
 var initialPos = [0, 0];
 var initialDim = [0, 0];
 var initialRot = 0;
-
-// var initialRadians = initialRot * Math.PI / 180;
-// var cosFraction = Math.cos(initRadians);
-// var sinFraction = Math.sin(initRadians);
-
 var isMoving = false;
+var isResizing = false;
+var isRotating = false;
 const isDraggable = function(target) {
   if (target.classList.contains('draggable')) return true
 }
 
+// Mouse
 var initialMousePos = [0, 0];
 
+// Constrol Panel
+class CtrlPanel {
+  constructor() {
+    const panel = document.createElement("nav");
+    panel.id = 'cp';
+    body.appendChild(panel);
 
-class Navigation {
-  constructor(element) {
-    const selector = document.createElement("div");
-    selector.id = 'selector';
-    selector.classList.add('navigation');
-    element.appendChild(selector);
+    const cpObjects = document.createElement("div");
+    cpObjects.id = 'cp__objects';
+    cpObjects.classList.add('panel', 'cp__container', 'cp__container--scroll');
+    panel.appendChild(cpObjects);
 
-    const resizeTopLeft = document.createElement("div");
-    resizeTopLeft.classList.add('navigation', 'selector__resize', 'selector__resize__diagonal');
-    resizeTopLeft.id = 'topleft';
-    selector.appendChild(resizeTopLeft);
+    const cpInstruments = document.createElement("div");
+    cpInstruments.id = 'cp__instruments';
+    cpInstruments.classList.add('panel', 'cp__container', 'cp__container--scroll');
+    panel.appendChild(cpInstruments);
+  }
 
-    const resizeTopRight = document.createElement("div");
-    resizeTopRight.classList.add('navigation', 'selector__resize', 'selector__resize__diagonal');
-    resizeTopRight.id = 'topright';
-    selector.appendChild(resizeTopRight);
+  showObjects() {}
 
-    const resizeBottomRight = document.createElement("div");
-    resizeBottomRight.classList.add('navigation', 'selector__resize', 'selector__resize__diagonal');
-    resizeBottomRight.id = 'bottomright';
-    selector.appendChild(resizeBottomRight);
+  showInstruments() {}
 
-    const resizeBottomLeft = document.createElement("div");
-    resizeBottomLeft.classList.add('navigation', 'selector__resize', 'selector__resize__diagonal');
-    resizeBottomLeft.id = 'bottomleft';
-    selector.appendChild(resizeBottomLeft);
+  showPosition() {
+    document.getElementsByClassName('panel').style.display = 'block';
+  }
 
-    const resizeTop = document.createElement("div");
-    resizeTop.classList.add('navigation', 'selector__resize', 'selector__resize__vertical');
-    resizeTop.id = 'top';
-    selector.appendChild(resizeTop);
+  showSize() {}
 
-    const resizeRight = document.createElement("div");
-    resizeRight.classList.add('navigation', 'selector__resize', 'selector__resize__horizontal');
-    resizeRight.id = 'right';
-    selector.appendChild(resizeRight);
+  showAngle() {}
 
-    const resizeBottom = document.createElement("div");
-    resizeBottom.classList.add('navigation', 'selector__resize', 'selector__resize__vertical');
-    resizeBottom.id = 'bottom';
-    selector.appendChild(resizeBottom);
-
-    const resizeLeft = document.createElement("div");
-    resizeLeft.classList.add('navigation', 'selector__resize', 'selector__resize__horizontal');
-    resizeLeft.id = 'left';
-    selector.appendChild(resizeLeft);
-
-    for (var i of document.querySelectorAll('.selector__resize')) {
-      i.addEventListener('pointerdown', function(e) {
-        e.preventDefault();
-        currentResizer = e.currentTarget;
-        initialMousePos = [Math.round(e.pageX), Math.round(e.pageY)];
-        initialDim = [activeElement.getBoundingClientRect().width, activeElement.getBoundingClientRect().height];
-        initialPos = [activeElement.getBoundingClientRect().left, activeElement.getBoundingClientRect().top];
-        // initialRot = ;
-        document.addEventListener('pointermove', resizeElement);
-        document.addEventListener('pointerup', stopResize);
-      });
+  hideAll() {
+    for (let i in document.querySelector('#cp')) {
+      if (i.classList.contains('panel')) {
+        i.style.display = 'none';
+      }
     }
-
-    const sizes = document.createElement("div");
-    sizes.id = 'sizes';
-    sizes.innerHTML = "";
-    selector.appendChild(sizes);
   }
 }
 
-function getPosition(e) {
+// const ctrlPanel = new CtrlPanel();
+
+
+function objectRemove() {
+  if (activeObject) {
+    activeObject.remove();
+    activeObject = undefined;
+  }
+}
+
+document.querySelector('#cp__instruments__remove').addEventListener('pointerdown', objectRemove);
+
+
+// Transforming
+class Selector {
+  constructor(element) {
+    const selector = document.createElement("div");
+    selector.id = 'selector';
+    selector.classList.add('transforming');
+    element.appendChild(selector);
+
+    const resizeTopLeft = document.createElement("div");
+    resizeTopLeft.id = 'topleft';
+    resizeTopLeft.classList.add('transforming', 'selector__resize', 'selector__resize__diagonal');
+    selector.appendChild(resizeTopLeft);
+
+    const resizeTopRight = document.createElement("div");
+    resizeTopRight.id = 'topright';
+    resizeTopRight.classList.add('transforming', 'selector__resize', 'selector__resize__diagonal');
+    selector.appendChild(resizeTopRight);
+
+    const resizeBottomRight = document.createElement("div");
+    resizeBottomRight.id = 'bottomright';
+    resizeBottomRight.classList.add('transforming', 'selector__resize', 'selector__resize__diagonal');
+    selector.appendChild(resizeBottomRight);
+
+    const resizeBottomLeft = document.createElement("div");
+    resizeBottomLeft.id = 'bottomleft';
+    resizeBottomLeft.classList.add('transforming', 'selector__resize', 'selector__resize__diagonal');
+    selector.appendChild(resizeBottomLeft);
+
+    const resizeTop = document.createElement("div");
+    resizeTop.id = 'top';
+    resizeTop.classList.add('transforming', 'selector__resize', 'selector__resize__vertical');
+    selector.appendChild(resizeTop);
+
+    const resizeRight = document.createElement("div");
+    resizeRight.id = 'right';
+    resizeRight.classList.add('transforming', 'selector__resize', 'selector__resize__horizontal');
+    selector.appendChild(resizeRight);
+
+    const resizeBottom = document.createElement("div");
+    resizeBottom.id = 'bottom';
+    resizeBottom.classList.add('transforming', 'selector__resize', 'selector__resize__vertical');
+    selector.appendChild(resizeBottom);
+
+    const resizeLeft = document.createElement("div");
+    resizeLeft.id = 'left';
+    resizeLeft.classList.add('transforming', 'selector__resize', 'selector__resize__horizontal');
+    selector.appendChild(resizeLeft);
+
+    const rotation = document.createElement("div");
+    rotation.id = 'rotation';
+    rotation.classList.add('transforming');
+    selector.appendChild(rotation);
+
+    // const unitCircle = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    // unitCircle.id = 'unitCircle';
+    // selector.appendChild(unitCircle);
+    //
+    // const circlePath = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    // circlePath.setAttribute("cx", "50%");
+    // circlePath.setAttribute("cy", "50%");
+    // circlePath.setAttribute("r", "50%");
+    // unitCircle.appendChild(circlePath);
+
+    for (var i of document.querySelectorAll('.selector__resize')) {
+      i.addEventListener('pointerdown', function startResize(e) {
+        e.preventDefault();
+        currentResizer = e.currentTarget;
+        initialMousePos = [Math.round(e.pageX), Math.round(e.pageY)];
+        initialDim = [activeObject.getBoundingClientRect().width, activeObject.getBoundingClientRect().height];
+        initialPos = [activeObject.getBoundingClientRect().left, activeObject.getBoundingClientRect().top];
+        isResizing = true;
+        document.getElementById('cp__instruments').style.display = 'none';
+        document.querySelector('#cp__size').style.display = 'flex';
+        // initialRot = ;
+        document.addEventListener('pointermove', objectResize);
+        document.addEventListener('pointerup', stopResize);
+      });
+    }
+    rotation.addEventListener('pointerdown', function startRotate(e) {
+      e.preventDefault();
+      initialMousePos = [Math.round(e.pageX), Math.round(e.pageY)];
+      initialDim = [activeObject.getBoundingClientRect().width, activeObject.getBoundingClientRect().height];
+      initialPos = [activeObject.getBoundingClientRect().left, activeObject.getBoundingClientRect().top];
+      isRotating = true;
+      document.getElementById('cp__instruments').style.display = 'none';
+      document.querySelector('#cp__angle').style.display = 'flex';
+      // initialRot = ;
+      document.addEventListener('pointermove', objectRotate);
+      document.addEventListener('pointerup', stopRotate);
+    });
+  }
+}
+
+function objectSelect(e) {
   if (isDraggable(e.target)) {
     isMoving = true;
     initialPos = [
@@ -99,36 +172,45 @@ function getPosition(e) {
       e.target.offsetTop - Math.round(e.pageY)
     ];
   }
-}
-
-function selectElement(e) {
-  if (!activeElement && isDraggable(e.target)) {
-    activeElement = e.target;
-    const selector = new Navigation(activeElement);
-    document.querySelector('#sizes').innerHTML = activeElement.getBoundingClientRect().width + ' x ' + activeElement.getBoundingClientRect().height;
-  } else if (activeElement) {
-    if (isDraggable(e.target) && e.target !== activeElement) {
-      activeElement = e.target;
-      document.querySelector('#selector').remove();
-      const selector = new Navigation(activeElement);
-      document.querySelector('#sizes').innerHTML = activeElement.getBoundingClientRect().width + ' x ' + activeElement.getBoundingClientRect().height;
-    } else if (!isDraggable(e.target) && !isNavigation(e.target)) {
-      activeElement = undefined;
-      document.querySelector('#selector').remove();
+  if (!activeObject && isDraggable(e.target)) {
+    activeObject = e.target;
+    const selector = new Selector(activeObject);
+    console.log('hop');
+    document.getElementById('cp__instruments').style.display = 'flex';
+  } else if (activeObject) {
+    if (isDraggable(e.target) && e.target !== activeObject) {
+      activeObject = e.target;
+      document.querySelector('#selector').remove()
+      const selector = new Selector(activeObject);
     }
   }
 }
 
-function moveElement(e) {
+function objectMove(e) {
   e.preventDefault();
   const mousePos = [Math.round(e.pageX), Math.round(e.pageY)];
-  if (activeElement && isMoving) {
-    activeElement.style.left = (initialPos[0] + mousePos[0]) + 'px';
-    activeElement.style.top = (initialPos[1] + mousePos[1]) + 'px';
+  if (activeObject && isMoving) {
+    activeObject.style.left = (initialPos[0] + mousePos[0]) + 'px';
+    activeObject.style.top = (initialPos[1] + mousePos[1]) + 'px';
+    // ctrlPanel.hideAll();
+    document.getElementById('cp__instruments').style.display = 'none';
+    document.querySelector('#cp__position').style.display = 'flex';
+    document.getElementById('cp__position__value').innerHTML = 'X: ' + activeObject.getBoundingClientRect().left + ' Y: ' + activeObject.getBoundingClientRect().top;
   }
-};
+}
 
-function resizeElement(e) {
+function stopMove(e) {
+  isMoving = false;
+  document.querySelector('#cp__position').style.display = 'none';
+  document.querySelector('#cp__instruments').style.display = 'flex';
+  if (e.target === body || e.target === sandbox) {
+   activeObject = undefined;
+   document.querySelector('#selector').remove()
+   document.querySelector('#cp__instruments').style.display = 'none';
+ }
+}
+
+function objectResize(e) {
   const mousePos = [Math.round(e.pageX), Math.round(e.pageY)];
   // var mouseWidthDiff = e.pageX - mousePos[0];
   // var mouseHeightDiff = e.pageY - mousePos[1];
@@ -136,70 +218,61 @@ function resizeElement(e) {
   // var rotHeightDiff = cosFraction * mouseHeightDiff - sinFraction * mouseWidthDiff;
 
   if (currentResizer.id === 'topleft') {
-    activeElement.style.width = initialDim[0] - (mousePos[0] - initialMousePos[0]) + 'px';
-    activeElement.style.height = initialDim[1] - (mousePos[1] - initialMousePos[1]) + 'px';
-    activeElement.style.left = initialPos[0] + (mousePos[0] - initialMousePos[0]) + 'px';
-    activeElement.style.top = initialPos[1] + (mousePos[1] - initialMousePos[1]) + 'px';
-    document.querySelector('#sizes').innerHTML = activeElement.getBoundingClientRect().width + ' x ' + activeElement.getBoundingClientRect().height;
+    activeObject.style.width = initialDim[0] - (mousePos[0] - initialMousePos[0]) + 'px';
+    activeObject.style.height = initialDim[1] - (mousePos[1] - initialMousePos[1]) + 'px';
+    activeObject.style.left = initialPos[0] + (mousePos[0] - initialMousePos[0]) + 'px';
+    activeObject.style.top = initialPos[1] + (mousePos[1] - initialMousePos[1]) + 'px';
+    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'topright') {
-    activeElement.style.width = initialDim[0] + (mousePos[0] - initialMousePos[0]) + 'px';
-    activeElement.style.height = initialDim[1] - (mousePos[1] - initialMousePos[1]) + 'px';
-    activeElement.style.top = initialPos[1] + (mousePos[1] - initialMousePos[1]) + 'px';
-    document.querySelector('#sizes').innerHTML = activeElement.getBoundingClientRect().width + ' x ' + activeElement.getBoundingClientRect().height;
+    activeObject.style.width = initialDim[0] + (mousePos[0] - initialMousePos[0]) + 'px';
+    activeObject.style.height = initialDim[1] - (mousePos[1] - initialMousePos[1]) + 'px';
+    activeObject.style.top = initialPos[1] + (mousePos[1] - initialMousePos[1]) + 'px';
+    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'bottomright') {
-    activeElement.style.width = initialDim[0] + (mousePos[0] - initialMousePos[0]) + 'px';
-    activeElement.style.height = initialDim[1] + (mousePos[1] - initialMousePos[1]) + 'px';
-    document.querySelector('#sizes').innerHTML = activeElement.getBoundingClientRect().width + ' x ' + activeElement.getBoundingClientRect().height;
+    activeObject.style.width = initialDim[0] + (mousePos[0] - initialMousePos[0]) + 'px';
+    activeObject.style.height = initialDim[1] + (mousePos[1] - initialMousePos[1]) + 'px';
+    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'bottomleft') {
-    activeElement.style.width = initialDim[0] - (mousePos[0] - initialMousePos[0]) + 'px';
-    activeElement.style.height = initialDim[1] + (mousePos[1] - initialMousePos[1]) + 'px';
-    activeElement.style.left = initialPos[0] + (mousePos[0] - initialMousePos[0]) + 'px';
-    document.querySelector('#sizes').innerHTML = activeElement.getBoundingClientRect().width + ' x ' + activeElement.getBoundingClientRect().height;
+    activeObject.style.width = initialDim[0] - (mousePos[0] - initialMousePos[0]) + 'px';
+    activeObject.style.height = initialDim[1] + (mousePos[1] - initialMousePos[1]) + 'px';
+    activeObject.style.left = initialPos[0] + (mousePos[0] - initialMousePos[0]) + 'px';
+    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'top') {
-    activeElement.style.height = initialDim[1] - (mousePos[1] - initialMousePos[1]) + 'px';
-    activeElement.style.top = initialPos[1] + (mousePos[1] - initialMousePos[1]) + 'px';
-    document.querySelector('#sizes').innerHTML = activeElement.getBoundingClientRect().width + ' x ' + activeElement.getBoundingClientRect().height;
+    activeObject.style.height = initialDim[1] - (mousePos[1] - initialMousePos[1]) + 'px';
+    activeObject.style.top = initialPos[1] + (mousePos[1] - initialMousePos[1]) + 'px';
+    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'right') {
-    activeElement.style.width = initialDim[0] + (mousePos[0] - initialMousePos[0]) + 'px';
-    document.querySelector('#sizes').innerHTML = activeElement.getBoundingClientRect().width + ' x ' + activeElement.getBoundingClientRect().height;
+    activeObject.style.width = initialDim[0] + (mousePos[0] - initialMousePos[0]) + 'px';
+    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'bottom') {
-    activeElement.style.height = initialDim[1] + (mousePos[1] - initialMousePos[1]) + 'px';
-    document.querySelector('#sizes').innerHTML = activeElement.getBoundingClientRect().width + ' x ' + activeElement.getBoundingClientRect().height;
+    activeObject.style.height = initialDim[1] + (mousePos[1] - initialMousePos[1]) + 'px';
+    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'left') {
-    activeElement.style.width = initialDim[0] - (mousePos[0] - initialMousePos[0]) + 'px';
-    activeElement.style.left = initialPos[0] + (mousePos[0] - initialMousePos[0]) + 'px';
-    document.querySelector('#sizes').innerHTML = activeElement.getBoundingClientRect().width + ' x ' + activeElement.getBoundingClientRect().height;
+    activeObject.style.width = initialDim[0] - (mousePos[0] - initialMousePos[0]) + 'px';
+    activeObject.style.left = initialPos[0] + (mousePos[0] - initialMousePos[0]) + 'px';
+    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   }
 }
 
 function stopResize(e) {
-  document.removeEventListener('pointermove', resizeElement);
+  document.querySelector('#cp__size').style.display = 'none';
+  document.getElementById('cp__instruments').style.display = 'flex';
   currentResizer = undefined;
+  isResizing = false;
+  document.removeEventListener('pointermove', objectResize);
 }
 
-function toCanvas() {
-  for (object in sandbox) {
-    var segments = object.normalizedPathSegList;
-    console.log(segments);
-    for (var i = 0, len = segments.length; i < len; i++) {
-      var pathSeg = segments.getItem(i);
-      switch (pathSeg.pathSegType) {
-        case SVGPathSeg.PATHSEG_MOVETO_ABS:
-          ctx.moveTo(pathSeg.x, pathSeg.y);
-          break;
-        case SVGPathSeg.PATHSEG_LINETO_ABS:
-          ctx.lineTo(pathSeg.x, pathSeg.y);
-          break;
-        case SVGPathSeg.PATHSEG_CLOSEPATH:
-          ctx.closePath();
-          break;
-      }
-    }
-  }
+function objectRotate(e) {
+  if (activeObject) {}
 }
-// toCanvas();
 
-document.addEventListener('pointerdown', selectElement);
-document.addEventListener('pointerdown', getPosition);
-document.addEventListener('pointermove', moveElement);
-document.addEventListener('pointerup', (() => isMoving = false));
+function stopRotate(e) {
+  isRotating = false;
+  document.querySelector('#cp__angle').style.display = 'none';
+  document.removeEventListener('pointermove', objectResize);
+}
+
+// Init
+document.addEventListener('pointerdown', objectSelect);
+document.addEventListener('pointermove', objectMove);
+document.addEventListener('pointerup', stopMove);

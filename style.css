@@ -8,6 +8,29 @@
 
 :root {
   --select-color: #008BF8;
+  --rounded: 12px;
+  --blur: 32px;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.75rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.5rem;
+}
+
+h3 {
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.25rem;
 }
 
 html {
@@ -15,50 +38,152 @@ html {
   -moz-osx-font-smoothing: grayscale;
   width: 100%;
   height: 100%;
-  pointer-events: none;
+  font-family: 'Montserrat', sans-serif;
   touch-action: none;
 }
 
 body {
   width: 100%;
   height: 100%;
-  /* pointer-events: none;
-  touch-action: none; */
 }
 
+/* Sandbox area 🛠 */
 #canvas {
   background: darkgray;
 }
 
 #sandbox {
+  /* left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); */
   position: relative;
-  height: 50%;
-  width: 80%;
-  background: lightgray;
+  width: 512px;
+  height: 512px;
   overflow: hidden;
+  background: darkgray;
 }
 
 .draggable {
   display: block;
   position: absolute;
-  top: 100px;
-  left: 100px;
   width: 100px;
   height: 100px;
   background: gray;
-  fill: gray;
-  pointer-events: auto;
   touch-action: auto;
 }
 
-/* Selector */
-.navigation {
+/* Control panel 🎛 */
+#cp {
+  z-index: 100;
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  width: clamp(80px, 512px, 100% - 32px);
+  height: 48px;
+  overflow: hidden;
+  transform: translateX(-50%);
+  border-radius: var(--rounded);
+  backdrop-filter: blur(var(--blur));
+  background: #eeeeee;
+  pointer-events: auto;
+  touch-action: auto;
+  transition: bottom 0.2s;
+}
+
+.panel {
+  padding: 4px;
+}
+
+.cp__container {
+  gap: 8px;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.cp__container--scroll {
+  overflow-x: scroll;
+}
+
+.cp__container__button {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: calc(var(--rounded) - 2px);
+  background: #fafafa;
+  cursor: pointer;
+}
+
+.cp__container__button__icon {}
+
+/* .cp__fade {
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+
+.cp__fade__left {
+  float: left;
+  height: 100%;
+  width: 16px;
+  background: linear-gradient(90deg, rgba(238, 238, 238, 1) 0%, rgba(238, 238, 238, 0) 100%);
+}
+
+.cp__fade__right {
+  float: right;
+  height: 100%;
+  width: 16px;
+  background: linear-gradient(90deg, rgba(238, 238, 238, 0) 0%, rgba(238, 238, 238, 1) 100%);
+} */
+#cp__objects {
+  display: none;
+}
+
+#cp__objects__square {}
+
+#cp__instruments {
+  display: none;
+}
+
+.cp__stats {
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 0 12px;
+  color: gray;
   z-index: 100;
 }
 
-#selector {
+#cp__position {
+  display: none;
+}
+
+#cp__size {
+  display: none;
+}
+
+#cp__angle {
+  display: none;
+}
+
+#cp__position__value,
+#cp__size__value,
+#cp__angle__value {
+  color: black;
+}
+
+/* Transforming controls 🎚 */
+.transforming {
   display: block;
+  z-index: 100;
   position: absolute;
+  pointer-events: auto;
+}
+
+#selector {
+  z-index: 99;
   width: 100%;
   height: 100%;
   border: 2px solid var(--select-color);
@@ -66,10 +191,39 @@ body {
   touch-action: none;
 }
 
+#rotation {
+  top: -20px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, -100%) rotate(45deg);
+  border: 2px solid var(--select-color);
+  border-radius: 2px;
+  background: white;
+  cursor: grab;
+  touch-action: auto;
+}
+
+/* Work in progress
+
+#unitCircle {
+  display: none;
+  position: relative;
+  width: calc(100% + 56px);
+  height: max-content;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+#unitCircle circle {
+  stroke: var(--select-color);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 0 39.25%;
+} */
 .selector__resize {
-  display: block;
-  position: absolute;
-  pointer-events: auto;
   touch-action: auto;
 }
 
@@ -77,12 +231,14 @@ body {
   z-index: 99;
   width: 100%;
   height: 8px;
+  cursor: ns-resize;
 }
 
 .selector__resize__horizontal {
   z-index: 99;
   width: 8px;
   height: 100%;
+  cursor: ew-resize;
 }
 
 .selector__resize__diagonal {
@@ -92,10 +248,6 @@ body {
   border-radius: 50%;
   background: white;
 }
-
-/* .selector__resize__diagonal:hover {
-  background: var(--select-color);
-} */
 
 #topleft {
   top: -9px;
@@ -123,33 +275,22 @@ body {
 
 #top {
   top: -5px;
-  cursor: row-resize;
 }
 
 #right {
   right: -5px;
-  cursor: col-resize;
 }
 
 #bottom {
   bottom: -5px;
-  cursor: row-resize;
 }
 
 #left {
   left: -5px;
-  cursor: col-resize;
 }
 
-#sizes {
-  display: block;
-  position: absolute;
-  bottom: -32px;
-  left: 50%;
-  width: max-content;
-  padding: 1px 8px;
-  transform: translateX(-50%);
-  border-radius: 8px;
-  background: #cccccc;
-  font-size: 0.75rem;
+@media (min-width: 660px) {
+  #cp {
+    bottom: 24px;
+  }
 }

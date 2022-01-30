@@ -10,18 +10,45 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title></title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
 </head>
 
 <body>
   <div id="sandbox">
-    <svg>
-      <rect class="draggable" y="10"/>
-    </svg>
     <div class="draggable"></div>
-  </div>
-  <canvas id="canvas" width="300" height="300"></canvas>
+    <div class="draggable"></div>
 
+  </div>
+  <nav id="cp">
+    <div id="cp__objects" class="panel cp__container cp__container--scroll">
+      <div id="cp__objects__square" class="cp__container__button"></div>
+    </div>
+    <div id="cp__instruments" class="panel cp__container cp__container--scroll">
+      <div class="cp__container cp__container--scroll">
+        <div class="cp__container__button"></div>
+      </div>
+      <div id="cp__instruments__remove" class="cp__container__button"></div>
+    </div>
+    <div id="cp__position" class="panel cp__stats">
+      <h3 class="cp__position__name">Position:</h3>
+      <h3 id="cp__position__value">100 x 100</h3>
+      <h3 id="cp__position__unit">PX</h3>
+    </div>
+    <div id="cp__size" class="panel cp__stats">
+      <h3 class="cp__stats__name">Scale:</h3>
+      <h3 id="cp__size__value">100 x 100</h3>
+      <h3 id="cp__size__unit">PX</h3>
+    </div>
+    <div id="cp__angle" class="panel cp__stats">
+      <h3 class="cp__stats__name">Rotation:</h3>
+      <h3 id="cp__angle__value">100 x 100</h3>
+      <h3 id="cp__angle__unit">DEG</h3>
+    </div>
+  </nav>
+  <!-- <svg id="sandbox" width="500" height="500">
+    <rect class="draggable" style="x: 100; y: 100; width: 100px; height: 100px;" />
+  </svg> -->
+  <!-- <canvas id="canvas" width="300" height="300"></canvas> -->
 
   <!-- Scripts -->
   <script type="text/javascript" src="./main.js"></script>

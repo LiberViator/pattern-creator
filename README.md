@@ -1,5 +1,5 @@
 <h1 align="center">Pocket Pattern Creator</h1>
-<p align="center">A compact pattern creator.</p>
+<p align="center">Your compact pattern creator.</p>
 
 ## Links
 
@@ -7,4 +7,4 @@
 - [Documentation](https://galvanized-vanilla-f78.notion.site/Pattern-Creator-43ded5e36d2147bfa8d22eb4b2cf36bf)
 
 ## Features
-- Mobile support
+- Mobile support 

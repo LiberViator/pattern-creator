@@ -1,14 +1,14 @@
 const body = document.querySelector('body');
-const sandbox = document.querySelector('#sandbox');
 
-// Selector
-var currentResizer;
+// Canvas
+const sandbox = document.querySelector('#sandbox');
+let canvasPos;
 
 // Object
 var activeObject;
-var initialPos = [0, 0];
-var initialDim = [0, 0];
-var initialRot = 0;
+let initObjPos;
+let initObjDim;
+let initObjRot;
 var isMoving = false;
 var isResizing = false;
 var isRotating = false;
@@ -17,7 +17,8 @@ const isDraggable = function(target) {
 }
 
 // Mouse
-var initialMousePos = [0, 0];
+let mousePos;
+let initMousePos;
 
 // Constrol Panel
 class CtrlPanel {
@@ -60,7 +61,6 @@ class CtrlPanel {
 
 // const ctrlPanel = new CtrlPanel();
 
-
 function objectRemove() {
   if (activeObject) {
     activeObject.remove();
@@ -68,10 +68,11 @@ function objectRemove() {
   }
 }
 
-document.querySelector('#cp__instruments__remove').addEventListener('pointerdown', objectRemove);
-
+document.querySelector('#cp__instruments__remove').addEventListener('pointerup', objectRemove);
 
 // Transforming
+var currentResizer;
+
 class Selector {
   constructor(element) {
     const selector = document.createElement("div");
@@ -138,26 +139,26 @@ class Selector {
       i.addEventListener('pointerdown', function startResize(e) {
         e.preventDefault();
         currentResizer = e.currentTarget;
-        initialMousePos = [Math.round(e.pageX), Math.round(e.pageY)];
-        initialDim = [activeObject.getBoundingClientRect().width, activeObject.getBoundingClientRect().height];
-        initialPos = [activeObject.getBoundingClientRect().left, activeObject.getBoundingClientRect().top];
+        initMousePos = [Math.round(e.pageX), Math.round(e.pageY)];
+        initObjDim = [activeObject.getBoundingClientRect().width, activeObject.getBoundingClientRect().height];
+        initObjPos = [activeObject.getBoundingClientRect().left, activeObject.getBoundingClientRect().top];
         isResizing = true;
         document.getElementById('cp__instruments').style.display = 'none';
         document.querySelector('#cp__size').style.display = 'flex';
-        // initialRot = ;
+        // initObjRot = ;
         document.addEventListener('pointermove', objectResize);
         document.addEventListener('pointerup', stopResize);
       });
     }
     rotation.addEventListener('pointerdown', function startRotate(e) {
       e.preventDefault();
-      initialMousePos = [Math.round(e.pageX), Math.round(e.pageY)];
-      initialDim = [activeObject.getBoundingClientRect().width, activeObject.getBoundingClientRect().height];
-      initialPos = [activeObject.getBoundingClientRect().left, activeObject.getBoundingClientRect().top];
+      initMousePos = [Math.round(e.pageX) - sandbox.offsetLeft, Math.round(e.pageY - sandbox.offsetTop)];
+      initObjDim = [activeObject.getBoundingClientRect().width, activeObject.getBoundingClientRect().height];
+      initObjPos = [activeObject.getBoundingClientRect().left, activeObject.getBoundingClientRect().top];
       isRotating = true;
       document.getElementById('cp__instruments').style.display = 'none';
       document.querySelector('#cp__angle').style.display = 'flex';
-      // initialRot = ;
+      // initObjRot = ;
       document.addEventListener('pointermove', objectRotate);
       document.addEventListener('pointerup', stopRotate);
     });
@@ -167,7 +168,7 @@ class Selector {
 function objectSelect(e) {
   if (isDraggable(e.target)) {
     isMoving = true;
-    initialPos = [
+    initObjPos = [
       e.target.offsetLeft - Math.round(e.pageX),
       e.target.offsetTop - Math.round(e.pageY)
     ];
@@ -175,7 +176,6 @@ function objectSelect(e) {
   if (!activeObject && isDraggable(e.target)) {
     activeObject = e.target;
     const selector = new Selector(activeObject);
-    console.log('hop');
     document.getElementById('cp__instruments').style.display = 'flex';
   } else if (activeObject) {
     if (isDraggable(e.target) && e.target !== activeObject) {
@@ -188,14 +188,14 @@ function objectSelect(e) {
 
 function objectMove(e) {
   e.preventDefault();
-  const mousePos = [Math.round(e.pageX), Math.round(e.pageY)];
+  mousePos = [Math.round(e.pageX), Math.round(e.pageY)];
   if (activeObject && isMoving) {
-    activeObject.style.left = (initialPos[0] + mousePos[0]) + 'px';
-    activeObject.style.top = (initialPos[1] + mousePos[1]) + 'px';
+    activeObject.style.left = (initObjPos[0] + mousePos[0]) + 'px';
+    activeObject.style.top = (initObjPos[1] + mousePos[1]) + 'px';
     // ctrlPanel.hideAll();
     document.getElementById('cp__instruments').style.display = 'none';
     document.querySelector('#cp__position').style.display = 'flex';
-    document.getElementById('cp__position__value').innerHTML = 'X: ' + activeObject.getBoundingClientRect().left + ' Y: ' + activeObject.getBoundingClientRect().top;
+    document.getElementById('cp__position__value').innerHTML = 'X: ' + activeObject.offsetLeft + ' Y: ' + activeObject.offsetTop;
   }
 }
 
@@ -204,52 +204,53 @@ function stopMove(e) {
   document.querySelector('#cp__position').style.display = 'none';
   document.querySelector('#cp__instruments').style.display = 'flex';
   if (e.target === body || e.target === sandbox) {
-   activeObject = undefined;
-   document.querySelector('#selector').remove()
-   document.querySelector('#cp__instruments').style.display = 'none';
- }
+    activeObject = undefined;
+    document.querySelector('#selector').remove()
+    document.querySelector('#cp__instruments').style.display = 'none';
+  }
 }
 
 function objectResize(e) {
-  const mousePos = [Math.round(e.pageX), Math.round(e.pageY)];
+  mousePos = [Math.round(e.pageX), Math.round(e.pageY)];
+  canvasPos = [sandbox.getBoundingClientRect().left, sandbox.getBoundingClientRect().top];
   // var mouseWidthDiff = e.pageX - mousePos[0];
   // var mouseHeightDiff = e.pageY - mousePos[1];
   // var rotWidthDiff = cosFraction * mouseWidthDiff + sinFraction * mouseHeightDiff;
   // var rotHeightDiff = cosFraction * mouseHeightDiff - sinFraction * mouseWidthDiff;
 
   if (currentResizer.id === 'topleft') {
-    activeObject.style.width = initialDim[0] - (mousePos[0] - initialMousePos[0]) + 'px';
-    activeObject.style.height = initialDim[1] - (mousePos[1] - initialMousePos[1]) + 'px';
-    activeObject.style.left = initialPos[0] + (mousePos[0] - initialMousePos[0]) + 'px';
-    activeObject.style.top = initialPos[1] + (mousePos[1] - initialMousePos[1]) + 'px';
+    activeObject.style.width = initObjDim[0] - (mousePos[0] - initMousePos[0]) + 'px';
+    activeObject.style.height = initObjDim[1] - (mousePos[1] - initMousePos[1]) + 'px';
+    activeObject.style.left = initObjPos[0] + (mousePos[0] - canvasPos[0] - initMousePos[0]) + 'px';
+    activeObject.style.top = initObjPos[1] + (mousePos[1] - canvasPos[1] - initMousePos[1]) + 'px';
     document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'topright') {
-    activeObject.style.width = initialDim[0] + (mousePos[0] - initialMousePos[0]) + 'px';
-    activeObject.style.height = initialDim[1] - (mousePos[1] - initialMousePos[1]) + 'px';
-    activeObject.style.top = initialPos[1] + (mousePos[1] - initialMousePos[1]) + 'px';
+    activeObject.style.width = initObjDim[0] + (mousePos[0] - initMousePos[0]) + 'px';
+    activeObject.style.height = initObjDim[1] - (mousePos[1] - initMousePos[1]) + 'px';
+    activeObject.style.top = initObjPos[1] + (mousePos[1] - canvasPos[1] - initMousePos[1]) + 'px';
     document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'bottomright') {
-    activeObject.style.width = initialDim[0] + (mousePos[0] - initialMousePos[0]) + 'px';
-    activeObject.style.height = initialDim[1] + (mousePos[1] - initialMousePos[1]) + 'px';
+    activeObject.style.width = initObjDim[0] + (mousePos[0] - initMousePos[0]) + 'px';
+    activeObject.style.height = initObjDim[1] + (mousePos[1] - initMousePos[1]) + 'px';
     document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'bottomleft') {
-    activeObject.style.width = initialDim[0] - (mousePos[0] - initialMousePos[0]) + 'px';
-    activeObject.style.height = initialDim[1] + (mousePos[1] - initialMousePos[1]) + 'px';
-    activeObject.style.left = initialPos[0] + (mousePos[0] - initialMousePos[0]) + 'px';
+    activeObject.style.width = initObjDim[0] - (mousePos[0] - initMousePos[0]) + 'px';
+    activeObject.style.height = initObjDim[1] + (mousePos[1] - initMousePos[1]) + 'px';
+    activeObject.style.left = initObjPos[0] + (mousePos[0] - canvasPos[0] - initMousePos[0]) + 'px';
     document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'top') {
-    activeObject.style.height = initialDim[1] - (mousePos[1] - initialMousePos[1]) + 'px';
-    activeObject.style.top = initialPos[1] + (mousePos[1] - initialMousePos[1]) + 'px';
+    activeObject.style.height = initObjDim[1] - (mousePos[1] - initMousePos[1]) + 'px';
+    activeObject.style.top = initObjPos[1] + (mousePos[1] - canvasPos[1] - initMousePos[1]) + 'px';
     document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'right') {
-    activeObject.style.width = initialDim[0] + (mousePos[0] - initialMousePos[0]) + 'px';
+    activeObject.style.width = initObjDim[0] + (mousePos[0] - initMousePos[0]) + 'px';
     document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'bottom') {
-    activeObject.style.height = initialDim[1] + (mousePos[1] - initialMousePos[1]) + 'px';
+    activeObject.style.height = initObjDim[1] + (mousePos[1] - initMousePos[1]) + 'px';
     document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   } else if (currentResizer.id === 'left') {
-    activeObject.style.width = initialDim[0] - (mousePos[0] - initialMousePos[0]) + 'px';
-    activeObject.style.left = initialPos[0] + (mousePos[0] - initialMousePos[0]) + 'px';
+    activeObject.style.width = initObjDim[0] - (mousePos[0] - initMousePos[0]) + 'px';
+    activeObject.style.left = initObjPos[0] + (mousePos[0] - canvasPos[0] - initMousePos[0]) + 'px';
     document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
   }
 }
@@ -260,6 +261,7 @@ function stopResize(e) {
   currentResizer = undefined;
   isResizing = false;
   document.removeEventListener('pointermove', objectResize);
+  document.removeEventListener('pointerup', stopResize);
 }
 
 function objectRotate(e) {

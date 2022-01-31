@@ -1,5 +1,5 @@
 <h1 align="center">Pocket Pattern Creator</h1>
-<p align="center">Your compact pattern creator.</p>
+<p align="center">A compact pattern creator.</p>
 
 ## Links
 

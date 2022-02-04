@@ -1,5 +1,10 @@
 const body = document.querySelector('body');
 
+const svg = document.querySelector('#svg');
+
+
+document.querySelector('#bg').style.backgroundImage = 'url(' + svg + ')'
+
 // Canvas
 const sandbox = document.querySelector('#sandbox');
 let canvasPos;
@@ -21,45 +26,9 @@ let mousePos;
 let initMousePos;
 
 // Constrol Panel
-class CtrlPanel {
-  constructor() {
-    const panel = document.createElement("nav");
-    panel.id = 'cp';
-    body.appendChild(panel);
-
-    const cpObjects = document.createElement("div");
-    cpObjects.id = 'cp__objects';
-    cpObjects.classList.add('panel', 'cp__container', 'cp__container--scroll');
-    panel.appendChild(cpObjects);
-
-    const cpInstruments = document.createElement("div");
-    cpInstruments.id = 'cp__instruments';
-    cpInstruments.classList.add('panel', 'cp__container', 'cp__container--scroll');
-    panel.appendChild(cpInstruments);
-  }
-
-  showObjects() {}
-
-  showInstruments() {}
-
-  showPosition() {
-    document.getElementsByClassName('panel').style.display = 'block';
-  }
-
-  showSize() {}
-
-  showAngle() {}
-
-  hideAll() {
-    for (let i in document.querySelector('#cp')) {
-      if (i.classList.contains('panel')) {
-        i.style.display = 'none';
-      }
-    }
-  }
-}
-
-// const ctrlPanel = new CtrlPanel();
+const objectCloneButton = document.querySelector('#cp__instruments__clone');
+const objectColorButton = document.querySelector('#cp__instruments__clone__input');
+const objectRemoveButton = document.querySelector('#cp__instruments__remove');
 
 function objectRemove() {
   if (activeObject) {
@@ -68,7 +37,33 @@ function objectRemove() {
   }
 }
 
-document.querySelector('#cp__instruments__remove').addEventListener('pointerup', objectRemove);
+function objectClone() {
+  if (activeObject) {
+    const clonedObj = activeObject.cloneNode(false);
+    activeObject = clonedObj;
+    document.querySelector('#selector').remove()
+    const selector = new Selector(activeObject);
+    sandbox.appendChild(activeObject);
+  }
+}
+
+function objectColor() {
+  if (activeObject) {
+    activeObject.style.backgroundColor = objectColorButton.value;
+  }
+}
+
+function objectOpacity() {
+  if (activeObject) {
+    activeObject.style.backgroundColor = objectColorButton.value;
+  }
+}
+
+
+objectCloneButton.addEventListener('pointerup', objectClone);
+objectColorButton.addEventListener('input', objectColor);
+objectRemoveButton.addEventListener('pointerup', objectRemove);
+
 
 // Transforming
 var currentResizer;
@@ -182,6 +177,10 @@ function objectSelect(e) {
       activeObject = e.target;
       document.querySelector('#selector').remove()
       const selector = new Selector(activeObject);
+    } else if (e.target === body || e.target === sandbox) {
+      activeObject = undefined;
+      document.querySelector('#selector').remove()
+      document.querySelector('#cp__instruments').style.display = 'none';
     }
   }
 }
@@ -203,9 +202,7 @@ function stopMove(e) {
   isMoving = false;
   document.querySelector('#cp__position').style.display = 'none';
   document.querySelector('#cp__instruments').style.display = 'flex';
-  if (e.target === body || e.target === sandbox) {
-    activeObject = undefined;
-    document.querySelector('#selector').remove()
+  if (!activeObject) {
     document.querySelector('#cp__instruments').style.display = 'none';
   }
 }
@@ -274,7 +271,6 @@ function stopRotate(e) {
   document.removeEventListener('pointermove', objectResize);
 }
 
-// Init
 document.addEventListener('pointerdown', objectSelect);
 document.addEventListener('pointermove', objectMove);
 document.addEventListener('pointerup', stopMove);

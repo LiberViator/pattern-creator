@@ -26,9 +26,21 @@
     </div>
     <div id="cp__instruments" class="panel cp__container cp__container--scroll">
       <div class="cp__container cp__container--scroll">
-        <div class="cp__container__button"></div>
+        <div id="cp__instruments__clone" class="cp__container__button">
+          <img src="/img/clone.svg" class="cp__container__button__icon" alt="Object clone">
+        </div>
+        <div id="cp__instruments__color" class="cp__container__button">
+          <img src="/img/color.svg" class="cp__container__button__icon" alt="Object color">
+          <input type="color" id="cp__instruments__clone__input"></input>
+        </div>
+        <!-- <div id="cp__instruments__opacity" class="cp__container__button">
+          <img src="/img/opacity.svg" class="cp__container__button__icon" alt="Object opacity">
+        </div>
+        <div id="cp__instruments__border" class="cp__container__button"></div> -->
       </div>
-      <div id="cp__instruments__remove" class="cp__container__button"></div>
+      <div id="cp__instruments__remove" class="cp__container__button">
+        <img src="/img/remove.svg" class="cp__container__button__icon" alt="Object remove">
+      </div>
     </div>
     <div id="cp__position" class="panel cp__stats">
       <h3 class="cp__position__name">Position:</h3>
@@ -46,6 +58,7 @@
       <h3 id="cp__angle__unit">DEG</h3>
     </div>
   </nav>
+  <div id="bg"></div>
   <!-- <svg id="sandbox" width="500" height="500">
     <rect class="draggable" style="x: 100; y: 100; width: 100px; height: 100px;" />
   </svg> -->

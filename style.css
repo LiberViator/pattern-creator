@@ -60,7 +60,7 @@ body {
   transition: top .2s, right .2s;
 }
 
-/* Sandbox area 🛠 */
+/* Sandbox area */
 #canvas {
   background: darkgray;
   -webkit-touch-callout: none;
@@ -93,7 +93,7 @@ body {
   touch-action: auto;
 }
 
-/* Control panel 🎛 */
+/* Control panel */
 #cp {
   z-index: 100;
   position: absolute;
@@ -128,12 +128,18 @@ body {
 }
 
 .cp__container__button {
+  position: relative;
   flex-shrink: 0;
   width: 40px;
   height: 40px;
+  border: none;
   border-radius: calc(var(--rounded) - 2px);
   background: #fafafa;
   cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding: 8px;
 }
 
 .cp__container__button__icon {}
@@ -167,6 +173,14 @@ body {
   display: none;
 }
 
+#cp__instruments__clone__input{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
 .cp__stats {
   align-items: center;
   justify-content: space-between;
@@ -195,7 +209,7 @@ body {
   color: black;
 }
 
-/* Transforming controls 🎚 */
+/* Transforming controls */
 .transforming {
   display: block;
   z-index: 100;

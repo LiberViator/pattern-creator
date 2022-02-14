@@ -8,5 +8,5 @@
 
 ## Features
 - Styling & Transforming objects
-- Eporting as JPG, PNG
+- Exporting as JPG, PNG
 - Mobile support 

@@ -485,6 +485,7 @@ function generateImg() {
 function download() {
   downloadButton.download = `image.${document.querySelector('input[name="format"]:checked').value}`;
   downloadButton.href = canvas.toDataURL(`image/${document.querySelector('input[name="format"]:checked').value}`);
+  downloadButton.click();
 }
 
 downloadButton.addEventListener('click', download);

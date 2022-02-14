@@ -1,13 +1,174 @@
 const body = document.querySelector('body');
+const workspace = document.querySelector('#workspace');
+const preview = document.querySelector('#preview');
 
-const svg = document.querySelector('#svg');
-
-
-document.querySelector('#bg').style.backgroundImage = 'url(' + svg + ')'
+// Mouse
+let mousePos;
+let initMousePos;
 
 // Canvas
+var zoom = 1;
+
 const sandbox = document.querySelector('#sandbox');
-let canvasPos;
+var canvasPos = {
+  x: sandbox.getBoundingClientRect().left,
+  y: sandbox.getBoundingClientRect().top
+};
+var canvasDim = {
+  width: sandbox.getBoundingClientRect().width,
+  height: sandbox.getBoundingClientRect().height
+};
+
+function canvasUpdate() {
+  canvasPos = {
+    x: sandbox.getBoundingClientRect().left,
+    y: sandbox.getBoundingClientRect().top
+  };
+  selector.selectorUpdate();
+}
+
+window.addEventListener('resize', canvasUpdate);
+window.addEventListener('load', canvasUpdate);
+
+// Constrol Panel
+const ctrlPanel = document.querySelector('#cp');
+const cpObjects = document.querySelector('#cp__objects');
+const cpObjectsRect = document.querySelector('#cp__objects__rect');
+const cpObjectsCircle = document.querySelector('#cp__objects__circle');
+// const cpObjectsTriangle = document.querySelector('#cp__objects__triangle');
+const cpOptions = document.querySelector('#cp__options');
+const cpOptionsClone = document.querySelector('#cp__options__clone');
+const cpOptionsColor = document.querySelector('#cp__options__color__input');
+const cpOptionsRemove = document.querySelector('#cp__options__remove');
+const cpPosition = document.querySelector('#cp__position');
+const cpPositionValueX = document.querySelector('#cp__position__valueX');
+const cpPositionValueY = document.querySelector('#cp__position__valueY');
+const cpSize = document.querySelector('#cp__size');
+const cpSizeValueW = document.querySelector('#cp__size__valueW');
+const cpSizeValueH = document.querySelector('#cp__size__valueH');
+const cpAngle = document.querySelector('#cp__angle');
+const cpAngleValue = document.querySelector('#cp__angle__value');
+
+
+function updatePosition() {
+  cpPositionValueX.innerHTML = activeObject.getBBox().x;
+  cpPositionValueY.innerHTML = activeObject.getBBox().y;
+}
+
+function updateSize() {
+  cpSizeValueW.innerHTML = activeObject.getBBox().width;
+  cpSizeValueH.innerHTML = activeObject.getBBox().height;
+}
+
+function updateAngle() {}
+
+function showPanel(panel) {
+  const windows = document.querySelectorAll('.panel');
+  windows.forEach(window => window.style.display = 'none');
+
+  if (panel === 'objects') {
+    cpObjects.style.display = 'flex';
+  } else if (panel === 'options') {
+    cpOptions.style.display = 'flex';
+  } else if (panel === 'position') {
+    cpPosition.style.display = 'flex';
+  } else if (panel === 'size') {
+    cpSize.style.display = 'flex';
+  } else if (panel === 'angle') {
+    cpAngle.style.display = 'flex';
+  }
+}
+
+cpObjectsRect.addEventListener('click', createRect);
+cpObjectsCircle.addEventListener('click', createCircle);
+// cpObjectsTriangle.addEventListener('click', createTriangle);
+cpOptionsClone.addEventListener('click', objectClone);
+cpOptionsColor.addEventListener('input', objectColor);
+cpOptionsRemove.addEventListener('click', objectRemove);
+
+// Transforming
+var currentResizer;
+
+class Selector {
+  constructor() {
+    this.selector = document.createElement('div');
+    this.selector.id = 'selector';
+    this.selector.classList.add('transforming');
+
+    const resizeTopLeft = document.createElement('div');
+    resizeTopLeft.id = 'topleft';
+    resizeTopLeft.classList.add('transforming', 'selector__resize', 'selector__resize__diagonal');
+    this.selector.appendChild(resizeTopLeft);
+
+    const resizeTopRight = document.createElement('div');
+    resizeTopRight.id = 'topright';
+    resizeTopRight.classList.add('transforming', 'selector__resize', 'selector__resize__diagonal');
+    this.selector.appendChild(resizeTopRight);
+
+    const resizeBottomRight = document.createElement('div');
+    resizeBottomRight.id = 'bottomright';
+    resizeBottomRight.classList.add('transforming', 'selector__resize', 'selector__resize__diagonal');
+    this.selector.appendChild(resizeBottomRight);
+
+    const resizeBottomLeft = document.createElement('div');
+    resizeBottomLeft.id = 'bottomleft';
+    resizeBottomLeft.classList.add('transforming', 'selector__resize', 'selector__resize__diagonal');
+    this.selector.appendChild(resizeBottomLeft);
+
+    const resizeTop = document.createElement('div');
+    resizeTop.id = 'top';
+    resizeTop.classList.add('transforming', 'selector__resize', 'selector__resize__vertical');
+    this.selector.appendChild(resizeTop);
+
+    const resizeRight = document.createElement('div');
+    resizeRight.id = 'right';
+    resizeRight.classList.add('transforming', 'selector__resize', 'selector__resize__horizontal');
+    this.selector.appendChild(resizeRight);
+
+    const resizeBottom = document.createElement('div');
+    resizeBottom.id = 'bottom';
+    resizeBottom.classList.add('transforming', 'selector__resize', 'selector__resize__vertical');
+    this.selector.appendChild(resizeBottom);
+
+    const resizeLeft = document.createElement('div');
+    resizeLeft.id = 'left';
+    resizeLeft.classList.add('transforming', 'selector__resize', 'selector__resize__horizontal');
+    this.selector.appendChild(resizeLeft);
+
+    const rotation = document.createElement('div');
+    rotation.id = 'rotation';
+    rotation.classList.add('transforming');
+    this.selector.appendChild(rotation);
+
+    for (var i of this.selector.querySelectorAll('.selector__resize')) {
+      i.addEventListener('pointerdown', startResize);
+    }
+    rotation.addEventListener('pointerdown', startRotate);
+  }
+
+  selectorInit() {
+    workspace.appendChild(this.selector);
+    this.selector.style.width = (activeObject.getBBox().width * zoom) + 'px';
+    this.selector.style.height = (activeObject.getBBox().height * zoom) + 'px';
+    this.selector.style.left = ((activeObject.getBBox().x + canvasPos.x) * zoom) + 'px';
+    this.selector.style.top = ((activeObject.getBBox().y + canvasPos.y) * zoom) + 'px';
+  }
+
+  selectorRemove() {
+    workspace.removeChild(this.selector);
+  }
+
+  selectorUpdate() {
+    if (activeObject) {
+      this.selector.style.width = (activeObject.getBBox().width * zoom) + 'px';
+      this.selector.style.height = (activeObject.getBBox().height * zoom) + 'px';
+      this.selector.style.left = ((activeObject.getBBox().x + canvasPos.x) * zoom) + 'px';
+      this.selector.style.top = ((activeObject.getBBox().y + canvasPos.y) * zoom) + 'px';
+    }
+  }
+}
+
+const selector = new Selector();
 
 // Object
 var activeObject;
@@ -21,244 +182,183 @@ const isDraggable = function(target) {
   if (target.classList.contains('draggable')) return true
 }
 
-// Mouse
-let mousePos;
-let initMousePos;
+function createRect() {
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.style.width = '100px';
+  rect.style.height = '100px';
+  rect.style.x = '100px';
+  rect.style.y = '100px';
+  rect.classList.add('draggable');
+  sandbox.appendChild(rect);
 
-// Constrol Panel
-const objectCloneButton = document.querySelector('#cp__instruments__clone');
-const objectColorButton = document.querySelector('#cp__instruments__clone__input');
-const objectRemoveButton = document.querySelector('#cp__instruments__remove');
-
-function objectRemove() {
-  if (activeObject) {
-    activeObject.remove();
-    activeObject = undefined;
-  }
+  activeObject = rect;
+  selector.selectorInit();
+  showPanel('options');
 }
 
-function objectClone() {
-  if (activeObject) {
-    const clonedObj = activeObject.cloneNode(false);
-    activeObject = clonedObj;
-    document.querySelector('#selector').remove()
-    const selector = new Selector(activeObject);
-    sandbox.appendChild(activeObject);
-  }
+function createCircle() {
+  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  circle.style.width = '100px';
+  circle.style.height = '100px';
+  circle.style.x = '100px';
+  circle.style.y = '100px';
+  circle.style.rx = "100%";
+  circle.style.ry = "100%";
+  circle.classList.add('draggable');
+  sandbox.appendChild(circle);
 }
 
-function objectColor() {
-  if (activeObject) {
-    activeObject.style.backgroundColor = objectColorButton.value;
-  }
+function createTriangle() {
+  const triangle = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  triangle.style.width = '100px';
+  triangle.style.height = '100px';
+  triangle.style.x = '100px';
+  triangle.style.y = '100px';
+  triangle.setAttribute('d', 'M0,0 150,0 150,50 0,50');
+  triangle.classList.add('draggable');
+  sandbox.appendChild(triangle);
 }
 
-function objectOpacity() {
-  if (activeObject) {
-    activeObject.style.backgroundColor = objectColorButton.value;
-  }
-}
-
-
-objectCloneButton.addEventListener('pointerup', objectClone);
-objectColorButton.addEventListener('input', objectColor);
-objectRemoveButton.addEventListener('pointerup', objectRemove);
-
-
-// Transforming
-var currentResizer;
-
-class Selector {
-  constructor(element) {
-    const selector = document.createElement("div");
-    selector.id = 'selector';
-    selector.classList.add('transforming');
-    element.appendChild(selector);
-
-    const resizeTopLeft = document.createElement("div");
-    resizeTopLeft.id = 'topleft';
-    resizeTopLeft.classList.add('transforming', 'selector__resize', 'selector__resize__diagonal');
-    selector.appendChild(resizeTopLeft);
-
-    const resizeTopRight = document.createElement("div");
-    resizeTopRight.id = 'topright';
-    resizeTopRight.classList.add('transforming', 'selector__resize', 'selector__resize__diagonal');
-    selector.appendChild(resizeTopRight);
-
-    const resizeBottomRight = document.createElement("div");
-    resizeBottomRight.id = 'bottomright';
-    resizeBottomRight.classList.add('transforming', 'selector__resize', 'selector__resize__diagonal');
-    selector.appendChild(resizeBottomRight);
-
-    const resizeBottomLeft = document.createElement("div");
-    resizeBottomLeft.id = 'bottomleft';
-    resizeBottomLeft.classList.add('transforming', 'selector__resize', 'selector__resize__diagonal');
-    selector.appendChild(resizeBottomLeft);
-
-    const resizeTop = document.createElement("div");
-    resizeTop.id = 'top';
-    resizeTop.classList.add('transforming', 'selector__resize', 'selector__resize__vertical');
-    selector.appendChild(resizeTop);
-
-    const resizeRight = document.createElement("div");
-    resizeRight.id = 'right';
-    resizeRight.classList.add('transforming', 'selector__resize', 'selector__resize__horizontal');
-    selector.appendChild(resizeRight);
-
-    const resizeBottom = document.createElement("div");
-    resizeBottom.id = 'bottom';
-    resizeBottom.classList.add('transforming', 'selector__resize', 'selector__resize__vertical');
-    selector.appendChild(resizeBottom);
-
-    const resizeLeft = document.createElement("div");
-    resizeLeft.id = 'left';
-    resizeLeft.classList.add('transforming', 'selector__resize', 'selector__resize__horizontal');
-    selector.appendChild(resizeLeft);
-
-    const rotation = document.createElement("div");
-    rotation.id = 'rotation';
-    rotation.classList.add('transforming');
-    selector.appendChild(rotation);
-
-    // const unitCircle = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    // unitCircle.id = 'unitCircle';
-    // selector.appendChild(unitCircle);
-    //
-    // const circlePath = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    // circlePath.setAttribute("cx", "50%");
-    // circlePath.setAttribute("cy", "50%");
-    // circlePath.setAttribute("r", "50%");
-    // unitCircle.appendChild(circlePath);
-
-    for (var i of document.querySelectorAll('.selector__resize')) {
-      i.addEventListener('pointerdown', function startResize(e) {
-        e.preventDefault();
-        currentResizer = e.currentTarget;
-        initMousePos = [Math.round(e.pageX), Math.round(e.pageY)];
-        initObjDim = [activeObject.getBoundingClientRect().width, activeObject.getBoundingClientRect().height];
-        initObjPos = [activeObject.getBoundingClientRect().left, activeObject.getBoundingClientRect().top];
-        isResizing = true;
-        document.getElementById('cp__instruments').style.display = 'none';
-        document.querySelector('#cp__size').style.display = 'flex';
-        // initObjRot = ;
-        document.addEventListener('pointermove', objectResize);
-        document.addEventListener('pointerup', stopResize);
-      });
-    }
-    rotation.addEventListener('pointerdown', function startRotate(e) {
-      e.preventDefault();
-      initMousePos = [Math.round(e.pageX) - sandbox.offsetLeft, Math.round(e.pageY - sandbox.offsetTop)];
-      initObjDim = [activeObject.getBoundingClientRect().width, activeObject.getBoundingClientRect().height];
-      initObjPos = [activeObject.getBoundingClientRect().left, activeObject.getBoundingClientRect().top];
-      isRotating = true;
-      document.getElementById('cp__instruments').style.display = 'none';
-      document.querySelector('#cp__angle').style.display = 'flex';
-      // initObjRot = ;
-      document.addEventListener('pointermove', objectRotate);
-      document.addEventListener('pointerup', stopRotate);
-    });
-  }
-}
-
-function objectSelect(e) {
+function objectInit(e) {
   if (isDraggable(e.target)) {
     isMoving = true;
-    initObjPos = [
-      e.target.offsetLeft - Math.round(e.pageX),
-      e.target.offsetTop - Math.round(e.pageY)
-    ];
+    initObjPos = {
+      x: e.target.getBBox().x,
+      y: e.target.getBBox().y
+    };
+    initMousePos = {
+      x: e.pageX,
+      y: e.pageY
+    };
   }
   if (!activeObject && isDraggable(e.target)) {
     activeObject = e.target;
-    const selector = new Selector(activeObject);
-    document.getElementById('cp__instruments').style.display = 'flex';
+    selector.selectorInit();
+    // const selector = new Selector(activeObject);
+    showPanel('options');
   } else if (activeObject) {
     if (isDraggable(e.target) && e.target !== activeObject) {
       activeObject = e.target;
-      document.querySelector('#selector').remove()
-      const selector = new Selector(activeObject);
-    } else if (e.target === body || e.target === sandbox) {
+      selector.selectorRemove();
+      selector.selectorInit();
+    } else if (e.target === workspace || e.target === sandbox) {
       activeObject = undefined;
-      document.querySelector('#selector').remove()
-      document.querySelector('#cp__instruments').style.display = 'none';
+      selector.selectorRemove();
+      showPanel('objects');
     }
   }
 }
 
 function objectMove(e) {
   e.preventDefault();
-  mousePos = [Math.round(e.pageX), Math.round(e.pageY)];
+  mousePos = {
+    x: e.pageX,
+    y: e.pageY
+  };
   if (activeObject && isMoving) {
-    activeObject.style.left = (initObjPos[0] + mousePos[0]) + 'px';
-    activeObject.style.top = (initObjPos[1] + mousePos[1]) + 'px';
-    // ctrlPanel.hideAll();
-    document.getElementById('cp__instruments').style.display = 'none';
-    document.querySelector('#cp__position').style.display = 'flex';
-    document.getElementById('cp__position__value').innerHTML = 'X: ' + activeObject.offsetLeft + ' Y: ' + activeObject.offsetTop;
+    activeObject.style.x = (initObjPos.x + ((mousePos.x - initMousePos.x) / zoom)).toFixed() + 'px';
+    activeObject.style.y = (initObjPos.y + ((mousePos.y - initMousePos.y) / zoom)).toFixed() + 'px';
+    showPanel('position');
+    updatePosition()
+    selector.selectorUpdate();
   }
 }
 
 function stopMove(e) {
   isMoving = false;
-  document.querySelector('#cp__position').style.display = 'none';
-  document.querySelector('#cp__instruments').style.display = 'flex';
+  showPanel('options');
   if (!activeObject) {
-    document.querySelector('#cp__instruments').style.display = 'none';
+    showPanel('objects')
   }
 }
 
+function startResize(e) {
+  e.preventDefault();
+  currentResizer = e.currentTarget;
+  initMousePos = {
+    x: e.pageX,
+    y: e.pageY
+  };
+  initObjPos = {
+    x: activeObject.getBBox().x,
+    y: activeObject.getBBox().y
+  };
+  initObjDim = {
+    width: activeObject.getBBox().width,
+    height: activeObject.getBBox().height
+  };
+  isResizing = true;
+  showPanel('size');
+  // initObjRot = ;
+  document.addEventListener('pointermove', objectResize);
+  document.addEventListener('pointerup', stopResize);
+}
+
 function objectResize(e) {
-  mousePos = [Math.round(e.pageX), Math.round(e.pageY)];
-  canvasPos = [sandbox.getBoundingClientRect().left, sandbox.getBoundingClientRect().top];
-  // var mouseWidthDiff = e.pageX - mousePos[0];
-  // var mouseHeightDiff = e.pageY - mousePos[1];
-  // var rotWidthDiff = cosFraction * mouseWidthDiff + sinFraction * mouseHeightDiff;
-  // var rotHeightDiff = cosFraction * mouseHeightDiff - sinFraction * mouseWidthDiff;
+  mousePos = {
+    x: e.pageX,
+    y: e.pageY
+  };
+  selector.selectorUpdate();
+  updateSize();
 
   if (currentResizer.id === 'topleft') {
-    activeObject.style.width = initObjDim[0] - (mousePos[0] - initMousePos[0]) + 'px';
-    activeObject.style.height = initObjDim[1] - (mousePos[1] - initMousePos[1]) + 'px';
-    activeObject.style.left = initObjPos[0] + (mousePos[0] - canvasPos[0] - initMousePos[0]) + 'px';
-    activeObject.style.top = initObjPos[1] + (mousePos[1] - canvasPos[1] - initMousePos[1]) + 'px';
-    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
+    activeObject.style.width = Math.round(initObjDim.width - ((mousePos.x - initMousePos.x) / zoom)) + 'px';
+    activeObject.style.height = Math.round(initObjDim.height - ((mousePos.y - initMousePos.y) / zoom)) + 'px';
+    activeObject.style.x = Math.round(initObjPos.x + ((mousePos.x - initMousePos.x) / zoom)) + 'px';
+    activeObject.style.y = Math.round(initObjPos.y + ((mousePos.y - initMousePos.y) / zoom)) + 'px';
   } else if (currentResizer.id === 'topright') {
-    activeObject.style.width = initObjDim[0] + (mousePos[0] - initMousePos[0]) + 'px';
-    activeObject.style.height = initObjDim[1] - (mousePos[1] - initMousePos[1]) + 'px';
-    activeObject.style.top = initObjPos[1] + (mousePos[1] - canvasPos[1] - initMousePos[1]) + 'px';
-    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
+    activeObject.style.width = Math.round(initObjDim.width + ((mousePos.x - initMousePos.x) / zoom)) + 'px';
+    activeObject.style.height = Math.round(initObjDim.height - ((mousePos.y - initMousePos.y) / zoom)) + 'px';
+    activeObject.style.y = Math.round(initObjPos.y + ((mousePos.y - initMousePos.y) / zoom)) + 'px';
   } else if (currentResizer.id === 'bottomright') {
-    activeObject.style.width = initObjDim[0] + (mousePos[0] - initMousePos[0]) + 'px';
-    activeObject.style.height = initObjDim[1] + (mousePos[1] - initMousePos[1]) + 'px';
-    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
+    activeObject.style.width = Math.round(initObjDim.width + ((mousePos.x - initMousePos.x) / zoom)) + 'px';
+    activeObject.style.height = Math.round(initObjDim.height + ((mousePos.y - initMousePos.y) / zoom)) + 'px';
   } else if (currentResizer.id === 'bottomleft') {
-    activeObject.style.width = initObjDim[0] - (mousePos[0] - initMousePos[0]) + 'px';
-    activeObject.style.height = initObjDim[1] + (mousePos[1] - initMousePos[1]) + 'px';
-    activeObject.style.left = initObjPos[0] + (mousePos[0] - canvasPos[0] - initMousePos[0]) + 'px';
-    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
+    activeObject.style.width = Math.round(initObjDim.width - ((mousePos.x - initMousePos.x) / zoom)) + 'px';
+    activeObject.style.height = Math.round(initObjDim.height + ((mousePos.y - initMousePos.y) / zoom)) + 'px';
+    activeObject.style.x = Math.round(initObjPos.x + ((mousePos.x - initMousePos.x) / zoom)) + 'px';
   } else if (currentResizer.id === 'top') {
-    activeObject.style.height = initObjDim[1] - (mousePos[1] - initMousePos[1]) + 'px';
-    activeObject.style.top = initObjPos[1] + (mousePos[1] - canvasPos[1] - initMousePos[1]) + 'px';
-    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
+    activeObject.style.height = Math.round(initObjDim.height - ((mousePos.y - initMousePos.y) / zoom)) + 'px';
+    activeObject.style.y = Math.round(initObjPos.y + ((mousePos.y - initMousePos.y) / zoom)) + 'px';
   } else if (currentResizer.id === 'right') {
-    activeObject.style.width = initObjDim[0] + (mousePos[0] - initMousePos[0]) + 'px';
-    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
+    activeObject.style.width = Math.round(initObjDim.width + ((mousePos.x - initMousePos.x) / zoom)) + 'px';
   } else if (currentResizer.id === 'bottom') {
-    activeObject.style.height = initObjDim[1] + (mousePos[1] - initMousePos[1]) + 'px';
-    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
+    activeObject.style.height = Math.round(initObjDim.height + ((mousePos.y - initMousePos.y) / zoom)) + 'px';
   } else if (currentResizer.id === 'left') {
-    activeObject.style.width = initObjDim[0] - (mousePos[0] - initMousePos[0]) + 'px';
-    activeObject.style.left = initObjPos[0] + (mousePos[0] - canvasPos[0] - initMousePos[0]) + 'px';
-    document.getElementById('cp__size__value').innerHTML = activeObject.getBoundingClientRect().width + ' x ' + activeObject.getBoundingClientRect().height;
+    activeObject.style.width = Math.round(initObjDim.width - ((mousePos.x - initMousePos.x) / zoom)) + 'px';
+    activeObject.style.x = Math.round(initObjPos.x + ((mousePos.x - initMousePos.x) / zoom)) + 'px';
   }
 }
 
 function stopResize(e) {
-  document.querySelector('#cp__size').style.display = 'none';
-  document.getElementById('cp__instruments').style.display = 'flex';
+  selector.selectorUpdate();
+  showPanel('options');
   currentResizer = undefined;
   isResizing = false;
   document.removeEventListener('pointermove', objectResize);
   document.removeEventListener('pointerup', stopResize);
+}
+
+function startRotate(e) {
+  e.preventDefault();
+  initMousePos = {
+    x: Math.round(e.pageX) - sandbox.offsetLeft,
+    y: Math.round(e.pageY - sandbox.offsetTop)
+  };
+  initObjDim = {
+    width: activeObject.getBBox().width,
+    height: activeObject.getBBox().height
+  };
+  initObjPos = {
+    x: activeObject.getBBox().x,
+    y: activeObject.getBBox().y
+  };
+  isRotating = true;
+  showPanel('angle');
+  // initObjRot = ;
+  document.addEventListener('pointermove', objectRotate);
+  document.addEventListener('pointerup', stopRotate);
 }
 
 function objectRotate(e) {
@@ -267,10 +367,124 @@ function objectRotate(e) {
 
 function stopRotate(e) {
   isRotating = false;
-  document.querySelector('#cp__angle').style.display = 'none';
-  document.removeEventListener('pointermove', objectResize);
+  showPanel('options');
+  document.removeEventListener('pointermove', objectRotate);
+  document.removeEventListener('pointerup', stopRotate);
 }
 
-document.addEventListener('pointerdown', objectSelect);
+function objectRemove() {
+  if (activeObject) {
+    activeObject.remove();
+    activeObject = undefined;
+    selector.selectorRemove();
+    showPanel('objects');
+  }
+}
+
+function objectClone() {
+  if (activeObject) {
+    const clonedObj = activeObject.cloneNode(false);
+    activeObject = clonedObj;
+    sandbox.appendChild(activeObject);
+    selector.selectorRemove();
+    selector.selectorInit();
+  }
+}
+
+function objectColor() {
+  if (activeObject) {
+    activeObject.style.fill = cpOptionsColor.value;
+  }
+}
+
+function objectBringFront() {
+  if (activeObject) {
+    sandbox.lastElementChild.parentNode.insertBefore(activeObject, sandbox.lastElementChild.nextSibling);
+  }
+}
+
+document.addEventListener('pointerdown', objectInit);
 document.addEventListener('pointermove', objectMove);
 document.addEventListener('pointerup', stopMove);
+
+// Navigation
+const done = workspace.querySelector('#done');
+const back = preview.querySelector('#back');
+
+function workspaceShow() {
+  preview.style.display = 'none';
+  workspace.style.display = 'flex';
+}
+
+function previewShow() {
+  workspace.style.display = 'none';
+  preview.style.display = 'flex';
+
+  widthInput.value = canvasDim.width * 2;
+  heightInput.value = canvasDim.height * 2;
+
+  generateCanvas()
+}
+
+done.addEventListener('click', previewShow);
+back.addEventListener('click', workspaceShow);
+
+// Export
+const canvas = preview.querySelector('#preview__canvas');
+const widthInput = document.querySelector('#width');
+const heightInput = document.querySelector('#height');
+const formatInput = document.querySelectorAll('input[name="format"]');
+const downloadButton = document.querySelector('#download');
+
+var image;
+
+widthInput.addEventListener('input', generateImg);
+heightInput.addEventListener('input', generateImg);
+formatInput.forEach(radio => radio.addEventListener('change', chooseFormat));
+
+
+function chooseFormat(button) {
+  const labels = document.querySelectorAll('label');
+  const label = document.querySelector(`label[for='${button.target.value}']`);
+
+  labels.forEach((e) => (e.classList.remove('preview__container__labels-list__label--selected')));
+  label.classList.add('preview__container__labels-list__label--selected');
+}
+
+function generateCanvas() {
+  let sandboxCloned = sandbox.cloneNode(true);
+
+  let outerHTML = sandboxCloned.outerHTML,
+    blob = new Blob([outerHTML], {
+      type: 'image/svg+xml;charset=utf-8'
+    });
+
+  let URL = window.URL || window.webkitURL || window;
+  let blobURL = URL.createObjectURL(blob);
+
+  image = new Image();
+  image.onload = () => {
+    generateImg();
+  };
+  image.src = blobURL;
+}
+
+function generateImg() {
+  canvas.width = widthInput.value;
+  canvas.height = heightInput.value;
+  let context = canvas.getContext('2d');
+  var pattern = context.createPattern(image, 'repeat');
+  context.fillStyle = pattern;
+  context.fillRect(0, 0, widthInput.value, heightInput.value);
+  // png = canvas.toDataURL(); // default png
+  // jpeg = canvas.toDataURL('image/jpg');
+  // webp = canvas.toDataURL('image/webp');
+  // downloadButton.href = canvas.toDataURL(`image/${document.querySelector('input[name="format"]:checked').value}`);
+}
+
+function download() {
+  downloadButton.download = `image.${document.querySelector('input[name="format"]:checked').value}`;
+  downloadButton.href = canvas.toDataURL(`image/${document.querySelector('input[name="format"]:checked').value}`);
+}
+
+downloadButton.addEventListener('click', download);

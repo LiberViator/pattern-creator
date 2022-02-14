@@ -7,6 +7,6 @@
 - [Documentation](https://galvanized-vanilla-f78.notion.site/Pattern-Creator-43ded5e36d2147bfa8d22eb4b2cf36bf)
 
 ## Features
-- Transforming objects
-- Styling objects
+- Styling & Transforming objects
+- ~~Eporting as JPG, PNG~~
 - Mobile support 

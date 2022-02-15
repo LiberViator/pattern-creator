@@ -184,7 +184,9 @@ body {
 }
 
 .cp__container {
-  gap: 8px;
+  -webkit-column-gap: 8px;
+          column-gap: 8px;
+  row-gap: unset;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -551,7 +553,9 @@ hr {
     height: clamp(80px, 512px, 100%);
   }
   .cp__container {
-    gap: 8px 8px;
+    -webkit-column-gap: unset;
+            column-gap: unset;
+    row-gap: 8px;
     -webkit-box-orient: vertical;
     -webkit-box-direction: reverse;
         -ms-flex-direction: column-reverse;

@@ -233,8 +233,8 @@ function objectInit(e) {
       y: e.pageY
     };
     initObjDim = {
-      width: activeObject.getBBox().width,
-      height: activeObject.getBBox().height
+      width: e.target.getBBox().width,
+      height: e.target.getBBox().height
     };
   }
   if (!activeObject && isDraggable(e.target)) {

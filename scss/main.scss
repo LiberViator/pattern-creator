@@ -443,9 +443,9 @@ hr {
     }
 
     #cp {
-        flex-direction: column-reverse;
-        width: $containerSize;
-        height: $containerSize;
+        // flex-direction: column-reverse;
+        width: 100%;
+        height: 100%;
         writing-mode: tb-rl;
     }
 

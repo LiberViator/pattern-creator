@@ -66,9 +66,9 @@ body {
       -ms-flex-pack: end;
           justify-content: flex-end;
   padding: 16px;
-  background: yellow;
   -webkit-transition: 0.2s padding;
   transition: 0.2s padding;
+  z-index: 100;
 }
 
 .middle {
@@ -85,7 +85,6 @@ body {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  background: green;
 }
 
 .bottom {
@@ -104,9 +103,9 @@ body {
       -ms-flex-pack: center;
           justify-content: center;
   padding: 16px;
-  background: blue;
   -webkit-transition: 0.2s padding;
   transition: 0.2s padding;
+  z-index: 100;
 }
 
 .button {
@@ -162,7 +161,6 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  z-index: 100;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
       -ms-flex-flow: row;
@@ -444,6 +442,29 @@ hr {
           backdrop-filter: blur(32px);
 }
 
+.preview__dimensions label {
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
+
+.preview__dimensions__number-input {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  width: 8ch;
+  height: 32px;
+  border: none;
+  border-radius: calc(12px - 4px);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.preview__dimensions__number-input--error {
+  border: 2px solid #e85f5c;
+}
+
 .preview__formats {
   gap: 4px;
   display: -webkit-box;
@@ -479,24 +500,6 @@ hr {
 
 .preview__formats__labels-list__label--selected {
   color: black;
-}
-
-.preview__dimensions__number-input {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-  width: 8ch;
-  height: 32px;
-  border: none;
-  border-radius: calc(12px - 4px);
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-}
-
-.preview__dimensions__number-input--error {
-  border: 2px solid #e85f5c;
 }
 
 .preview__formats__radio-switch {

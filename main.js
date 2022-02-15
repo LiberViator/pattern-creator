@@ -487,3 +487,9 @@ function generateImg() {
   downloadButton.setAttribute('href', canvas.toDataURL(`image/${document.querySelector('input[name="format"]:checked').value}`));
   downloadButton.setAttribute('download', `image.${document.querySelector('input[name="format"]:checked').value}`);
 }
+
+
+window.onload = function() {
+  body.style.opacity = 1;
+  body.style.transition = '1s opacity';
+}

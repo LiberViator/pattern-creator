@@ -13,7 +13,7 @@ $containerClr: rgba(238, 238, 238, 0.8);
 $selectorClr: rgb(0, 139, 248);
 $errorClr: rgb(232, 95, 92);
 $roundCorners: 12px;
-$containerSize: clamp(100%, 512px, 100%);
+$containerSize: 100%;
 $blur: blur(32px);
 
 h1 {
@@ -138,7 +138,6 @@ body {
     color: gray;
     pointer-events: auto;
     touch-action: auto;
-    transition: bottom .2s;
 }
 
 .panel {
@@ -166,7 +165,7 @@ body {
     width: 40px;
     height: 40px;
     padding: 8px;
-    border-radius: calc(#{$roundCorners} - 2px);
+    border-radius: calc(#{$roundCorners} - 4px);
     background: $buttonClr;
     cursor: pointer;
 }
@@ -445,8 +444,8 @@ hr {
 
     #cp {
         flex-direction: column-reverse;
-        // width: 48px;
-        // height: $containerSize;
+        width: 48px;
+        height: $containerSize;
         writing-mode: tb-rl;
     }
 

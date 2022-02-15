@@ -98,8 +98,8 @@ body {
           align-items: center;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+      -ms-flex-flow: column;
+          flex-flow: column;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
@@ -136,8 +136,8 @@ body {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+      -ms-flex-flow: column;
+          flex-flow: column;
   width: 100%;
   height: 100%;
 }
@@ -165,8 +165,8 @@ body {
   z-index: 100;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
+      -ms-flex-flow: row;
+          flex-flow: row;
   width: clamp(80px, 512px, 100%);
   height: 48px;
   border-radius: 12px;
@@ -184,16 +184,14 @@ body {
 }
 
 .cp__container {
-  -webkit-column-gap: 8px;
-          column-gap: 8px;
-  row-gap: unset;
+  gap: 8px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
+      -ms-flex-flow: row;
+          flex-flow: row;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
@@ -397,8 +395,8 @@ hr {
   display: none;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+      -ms-flex-flow: column;
+          flex-flow: column;
   width: 100%;
   height: 100%;
 }
@@ -535,31 +533,28 @@ hr {
   #workspace {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
+        -ms-flex-flow: row;
+            flex-flow: row;
   }
   #workspace .top {
     -webkit-box-orient: vertical;
     -webkit-box-direction: reverse;
-        -ms-flex-direction: column-reverse;
-            flex-direction: column-reverse;
+        -ms-flex-flow: column-reverse;
+            flex-flow: column-reverse;
   }
   #cp {
     -webkit-box-orient: vertical;
     -webkit-box-direction: reverse;
-        -ms-flex-direction: column-reverse;
-            flex-direction: column-reverse;
+        -ms-flex-flow: column-reverse;
+            flex-flow: column-reverse;
     width: 48px;
     height: clamp(80px, 512px, 100%);
   }
   .cp__container {
-    -webkit-column-gap: unset;
-            column-gap: unset;
-    row-gap: 8px;
     -webkit-box-orient: vertical;
     -webkit-box-direction: reverse;
-        -ms-flex-direction: column-reverse;
-            flex-direction: column-reverse;
+        -ms-flex-flow: column-reverse;
+            flex-flow: column-reverse;
   }
   hr {
     width: 32px;
@@ -568,8 +563,8 @@ hr {
   .cp__stats {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
+        -ms-flex-flow: row;
+            flex-flow: row;
     padding: 16px 0;
     -webkit-writing-mode: tb-rl;
         -ms-writing-mode: tb-rl;
@@ -594,8 +589,8 @@ hr {
   #preview > .bottom {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
+        -ms-flex-flow: row;
+            flex-flow: row;
   }
 }
 /*# sourceMappingURL=main.css.map */

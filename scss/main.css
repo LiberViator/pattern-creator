@@ -551,6 +551,7 @@ hr {
     height: clamp(80px, 512px, 100%);
   }
   .cp__container {
+    gap: 8px 8px;
     -webkit-box-orient: vertical;
     -webkit-box-direction: reverse;
         -ms-flex-direction: column-reverse;

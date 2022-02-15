@@ -28,9 +28,9 @@ function canvasUpdate() {
   selector.selectorUpdate();
 }
 
-window.addEventListener('load', canvasUpdate);
+document.addEventListener('load', canvasUpdate);
 window.addEventListener('resize', canvasUpdate);
-window.addEventListener('orientationchange', canvasUpdate);
+screen.orientation.addEventListener('change', canvasUpdate);
 
 // Constrol Panel
 const ctrlPanel = document.querySelector('#cp');
@@ -236,7 +236,6 @@ function objectInit(e) {
   if (!activeObject && isDraggable(e.target)) {
     activeObject = e.target;
     selector.selectorInit();
-    // const selector = new Selector(activeObject);
     showPanel('options');
   } else if (activeObject) {
     if (isDraggable(e.target) && e.target !== activeObject) {

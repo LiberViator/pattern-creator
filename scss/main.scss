@@ -445,13 +445,13 @@ hr {
 
     #cp {
         flex-direction: column-reverse;
-        width: 48px;
-        height: $containerSize;
+        // width: 48px;
+        // height: $containerSize;
         writing-mode: tb-rl;
     }
 
     .cp__container {
-        flex-direction: column-reverse;
+        flex-direction: row-reverse;
     }
 
     hr {

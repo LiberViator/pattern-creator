@@ -557,10 +557,10 @@ hr {
             writing-mode: tb-rl;
   }
   .cp__container {
-    -webkit-box-orient: horizontal;
+    -webkit-box-orient: vertical;
     -webkit-box-direction: reverse;
-        -ms-flex-direction: row-reverse;
-            flex-direction: row-reverse;
+        -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse;
   }
   hr {
     width: 32px;

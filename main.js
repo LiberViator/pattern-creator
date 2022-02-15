@@ -28,9 +28,9 @@ function canvasUpdate() {
   selector.selectorUpdate();
 }
 
-document.addEventListener('load', canvasUpdate);
+sandbox.addEventListener('load', canvasUpdate);
 window.addEventListener('resize', canvasUpdate);
-screen.orientation.addEventListener('change', canvasUpdate);
+window.addEventListener('orientationchange', canvasUpdate);
 
 // Constrol Panel
 const ctrlPanel = document.querySelector('#cp');

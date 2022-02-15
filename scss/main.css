@@ -184,7 +184,6 @@ body {
 }
 
 .cp__container {
-  gap: 8px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -197,6 +196,10 @@ body {
           align-items: center;
   width: 100%;
   height: 100%;
+}
+
+.cp__container > *:not(:last-child) {
+  margin: 0 8px 0 0;
 }
 
 .cp__container--scroll {
@@ -556,6 +559,9 @@ hr {
         -ms-flex-flow: column-reverse;
             flex-flow: column-reverse;
   }
+  .cp__container > *:not(:last-child) {
+    margin: 8px 0 0 0;
+  }
   hr {
     width: 32px;
     height: 1px;
@@ -569,6 +575,9 @@ hr {
     -webkit-writing-mode: tb-rl;
         -ms-writing-mode: tb-rl;
             writing-mode: tb-rl;
+  }
+  .cp__stats > * {
+    margin: 0 !important;
   }
   .cp__stats__value {
     width: auto;

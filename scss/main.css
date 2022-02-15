@@ -93,10 +93,6 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
@@ -543,24 +539,19 @@ hr {
         -ms-flex-direction: column-reverse;
             flex-direction: column-reverse;
   }
-  #workspace .bottom {
+  #cp {
     -webkit-box-orient: vertical;
     -webkit-box-direction: reverse;
         -ms-flex-direction: column-reverse;
             flex-direction: column-reverse;
-  }
-  #cp {
     width: 48px;
     height: clamp(80px, 512px, 100%);
-    -webkit-writing-mode: tb-rl;
-        -ms-writing-mode: tb-rl;
-            writing-mode: tb-rl;
   }
   .cp__container {
-    -webkit-box-orient: horizontal;
+    -webkit-box-orient: vertical;
     -webkit-box-direction: reverse;
-        -ms-flex-direction: row-reverse;
-            flex-direction: row-reverse;
+        -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse;
   }
   hr {
     width: 32px;
@@ -572,6 +563,9 @@ hr {
         -ms-flex-direction: row;
             flex-direction: row;
     padding: 16px 0;
+    -webkit-writing-mode: tb-rl;
+        -ms-writing-mode: tb-rl;
+            writing-mode: tb-rl;
   }
   .cp__stats__value {
     width: auto;

@@ -550,17 +550,15 @@ hr {
     -webkit-box-direction: reverse;
         -ms-flex-direction: column-reverse;
             flex-direction: column-reverse;
-    width: 48px;
-    height: clamp(100%, 512px, 100%);
     -webkit-writing-mode: tb-rl;
         -ms-writing-mode: tb-rl;
             writing-mode: tb-rl;
   }
   .cp__container {
-    -webkit-box-orient: vertical;
+    -webkit-box-orient: horizontal;
     -webkit-box-direction: reverse;
-        -ms-flex-direction: column-reverse;
-            flex-direction: column-reverse;
+        -ms-flex-direction: row-reverse;
+            flex-direction: row-reverse;
   }
   hr {
     width: 32px;

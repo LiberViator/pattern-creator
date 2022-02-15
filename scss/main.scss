@@ -144,7 +144,8 @@ body {
 }
 
 .cp__container {
-    gap: 8px;
+    column-gap: 8px;
+    row-gap: unset;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -450,7 +451,8 @@ hr {
     }
 
     .cp__container {
-        gap: 8px 8px;
+        column-gap: unset;
+        row-gap: 8px;
         flex-direction: column-reverse;
     }
 

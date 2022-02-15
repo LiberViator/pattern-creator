@@ -232,6 +232,10 @@ function objectInit(e) {
       x: e.pageX,
       y: e.pageY
     };
+    initObjDim = {
+      width: activeObject.getBBox().width,
+      height: activeObject.getBBox().height
+    };
   }
   if (!activeObject && isDraggable(e.target)) {
     activeObject = e.target;
@@ -416,6 +420,7 @@ const backButton = preview.querySelector('.preview__back');
 function workspaceShow() {
   preview.style.display = 'none';
   workspace.style.display = 'flex';
+  canvasUpdate();
 }
 
 function previewShow() {

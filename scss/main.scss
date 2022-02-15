@@ -13,7 +13,7 @@ $containerClr: rgba(238, 238, 238, 0.8);
 $selectorClr: rgb(0, 139, 248);
 $errorClr: rgb(232, 95, 92);
 $roundCorners: 12px;
-$containerSize: clamp(80px, 512px, 100%);
+$containerSize: clamp(100%, 512px, 100%);
 $blur: blur(32px);
 
 h1 {
@@ -53,7 +53,9 @@ html {
 
 body {
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    height: 100vh;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch
 }

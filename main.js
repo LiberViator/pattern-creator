@@ -152,8 +152,8 @@ class Selector {
     workspace.appendChild(this.selector);
     this.selector.style.width = (activeObject.getBBox().width * zoom) + 'px';
     this.selector.style.height = (activeObject.getBBox().height * zoom) + 'px';
-    this.selector.style.left = ((activeObject.getBBox().x + canvasPos.x) * zoom) + 'px';
-    this.selector.style.top = ((activeObject.getBBox().y + canvasPos.y) * zoom) + 'px';
+    this.selector.style.left = ((activeObject.getBBox().x + sandbox.getBoundingClientRect().left) * zoom) + 'px';
+    this.selector.style.top = ((activeObject.getBBox().y + sandbox.getBoundingClientRect().top) * zoom) + 'px';
   }
 
   selectorRemove() {
@@ -164,8 +164,8 @@ class Selector {
     if (activeObject) {
       this.selector.style.width = (activeObject.getBBox().width * zoom) + 'px';
       this.selector.style.height = (activeObject.getBBox().height * zoom) + 'px';
-      this.selector.style.left = ((activeObject.getBBox().x + canvasPos.x) * zoom) + 'px';
-      this.selector.style.top = ((activeObject.getBBox().y + canvasPos.y) * zoom) + 'px';
+      this.selector.style.left = ((activeObject.getBBox().x + sandbox.getBoundingClientRect().left) * zoom) + 'px';
+      this.selector.style.top = ((activeObject.getBBox().y + sandbox.getBoundingClientRect().top) * zoom) + 'px';
     }
   }
 }

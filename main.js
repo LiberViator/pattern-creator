@@ -28,7 +28,7 @@ function canvasUpdate() {
   selector.selectorUpdate();
 }
 
-body.addEventListener('load', canvasUpdate);
+document.querySelector('body').addEventListener('load', canvasUpdate);
 window.addEventListener('resize', canvasUpdate);
 screen.orientation.addEventListener('change', canvasUpdate);
 

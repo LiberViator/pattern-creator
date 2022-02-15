@@ -81,6 +81,7 @@ body {
     gap: 16px;
     display: flex;
     align-items: center;
+    flex-direction: column;
     justify-content: center;
     padding: 16px;
     background: blue;
@@ -125,7 +126,6 @@ body {
 
 /* Control panel */
 #cp {
-    gap: 16px;
     display: flex;
     z-index: 100;
     flex-direction: row;
@@ -145,7 +145,7 @@ body {
 
 .cp__container {
     gap: 8px;
-    display: inline-flex;
+    display: flex;
     flex-direction: row;
     align-items: center;
     width: 100%;
@@ -437,8 +437,10 @@ hr {
         flex-direction: row;
     }
 
-    #workspace .top {
-        flex-direction: column-reverse;
+    #workspace {
+        .top {
+            flex-direction: column-reverse;
+        }
     }
 
     #cp {

@@ -13,7 +13,7 @@ $containerClr: rgba(238, 238, 238, 0.8);
 $selectorClr: rgb(0, 139, 248);
 $errorClr: rgb(232, 95, 92);
 $roundCorners: 12px;
-$containerSize: 100%;
+$containerSize: clamp(80px, 512px, 100%);
 $blur: blur(32px);
 
 h1 {
@@ -442,10 +442,13 @@ hr {
         flex-direction: column-reverse;
     }
 
-    #cp {
+    #workspace .bottom {
         flex-direction: column-reverse;
+    }
+
+    #cp {
         width: 48px;
-        height: 300px;
+        height: $containerSize;
         writing-mode: tb-rl;
     }
 

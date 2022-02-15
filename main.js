@@ -1,12 +1,13 @@
 const body = document.querySelector('body');
 const workspace = document.querySelector('#workspace');
 const preview = document.querySelector('#preview');
+const workspaceMiddle = workspace.querySelector('.middle')
 
 // Mouse
 let mousePos;
 let initMousePos;
 
-// Canvas
+// Workspace
 var zoom = 1;
 
 const sandbox = document.querySelector('#sandbox');
@@ -178,7 +179,7 @@ let initObjRot;
 var isMoving = false;
 var isResizing = false;
 var isRotating = false;
-const isDraggable = function(target) {
+const isDraggable = function (target) {
   if (target.classList.contains('draggable')) return true
 }
 
@@ -241,7 +242,7 @@ function objectInit(e) {
       activeObject = e.target;
       selector.selectorRemove();
       selector.selectorInit();
-    } else if (e.target === workspace || e.target === sandbox) {
+    } else if (e.target === workspaceMiddle || e.target === sandbox) {
       activeObject = undefined;
       selector.selectorRemove();
       showPanel('objects');
@@ -408,8 +409,8 @@ document.addEventListener('pointermove', objectMove);
 document.addEventListener('pointerup', stopMove);
 
 // Navigation
-const done = workspace.querySelector('#done');
-const back = preview.querySelector('#back');
+const doneButton = workspace.querySelector('#done');
+const backButton = preview.querySelector('.preview__back');
 
 function workspaceShow() {
   preview.style.display = 'none';
@@ -426,15 +427,15 @@ function previewShow() {
   generateCanvas()
 }
 
-done.addEventListener('click', previewShow);
-back.addEventListener('click', workspaceShow);
+doneButton.addEventListener('click', previewShow);
+backButton.addEventListener('click', workspaceShow);
 
 // Export
 const canvas = preview.querySelector('#preview__canvas');
 const widthInput = document.querySelector('#width');
 const heightInput = document.querySelector('#height');
 const formatInput = document.querySelectorAll('input[name="format"]');
-const downloadButton = document.querySelector('#download');
+const downloadButton = document.querySelector('.preview__download');
 
 var image;
 
@@ -442,13 +443,14 @@ widthInput.addEventListener('input', generateImg);
 heightInput.addEventListener('input', generateImg);
 formatInput.forEach(radio => radio.addEventListener('change', chooseFormat));
 
-
 function chooseFormat(button) {
   const labels = document.querySelectorAll('label');
   const label = document.querySelector(`label[for='${button.target.value}']`);
 
-  labels.forEach((e) => (e.classList.remove('preview__container__labels-list__label--selected')));
-  label.classList.add('preview__container__labels-list__label--selected');
+  labels.forEach((e) => (e.classList.remove('preview__formats__labels-list__label--selected')));
+  label.classList.add('preview__formats__labels-list__label--selected');
+
+  generateImg();
 }
 
 function generateCanvas() {
@@ -470,22 +472,17 @@ function generateCanvas() {
 }
 
 function generateImg() {
-  canvas.width = widthInput.value;
-  canvas.height = heightInput.value;
-  let context = canvas.getContext('2d');
-  var pattern = context.createPattern(image, 'repeat');
-  context.fillStyle = pattern;
-  context.fillRect(0, 0, widthInput.value, heightInput.value);
-  // png = canvas.toDataURL(); // default png
-  // jpeg = canvas.toDataURL('image/jpg');
-  // webp = canvas.toDataURL('image/webp');
-  // downloadButton.href = canvas.toDataURL(`image/${document.querySelector('input[name="format"]:checked').value}`);
+  if (widthInput.value >= canvasDim.width && heightInput.value >= canvasDim.height) {
+    document.querySelectorAll('.preview__dimensions__number-input').forEach((e) => (e.classList.remove('preview__dimensions__number-input--error')))
+    canvas.width = widthInput.value;
+    canvas.height = heightInput.value;
+    let context = canvas.getContext('2d');
+    var pattern = context.createPattern(image, 'repeat');
+    context.fillStyle = pattern;
+    context.fillRect(0, 0, widthInput.value, heightInput.value);
+  } else {
+    document.querySelectorAll('.preview__dimensions__number-input').forEach((e) => (e.classList.add('preview__dimensions__number-input--error')))
+  }
+  downloadButton.setAttribute('href', canvas.toDataURL(`image/${document.querySelector('input[name="format"]:checked').value}`));
+  downloadButton.setAttribute('download', `image.${document.querySelector('input[name="format"]:checked').value}`);
 }
-
-function download() {
-  downloadButton.download = `image.${document.querySelector('input[name="format"]:checked').value}`;
-  downloadButton.href = canvas.toDataURL(`image/${document.querySelector('input[name="format"]:checked').value}`);
-  downloadButton.click();
-}
-
-downloadButton.addEventListener('click', download);

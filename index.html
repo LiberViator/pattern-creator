@@ -9,7 +9,7 @@
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title></title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="scss/main.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
 </head>
 
@@ -25,20 +25,30 @@
     </div>
     <div class="bottom">
       <nav id="cp">
-        <div id="cp__objects" class="panel cp__container cp__container--scroll">
-          <div id="cp__objects__rect" class="cp__container__button"><img class="cp__container__button__icon" src="img/square.svg"></div>
-          <div id="cp__objects__circle" class="cp__container__button"><img class="cp__container__button__icon" src="img/circle.svg"></div>
-          <!-- <div id="cp__objects__triangle" class="cp__container__button"><img class="cp__container__button__icon" src="img/triangle.svg"></div> -->
+        <div id="cp__objects" class="panel cp__container">
+          <div class="cp__container cp__container--scroll">
+            <div id="cp__objects__rect" class="cp__container__button"><img class="cp__container__button__icon"
+                src="img/square.svg"></div>
+            <div id="cp__objects__circle" class="cp__container__button"><img class="cp__container__button__icon"
+                src="img/circle.svg"></div>
+            <!-- <div id="cp__objects__triangle" class="cp__container__button"><img class="cp__container__button__icon" src="img/triangle.svg"></div> -->
+          </div>
+          <hr>
+          <div class="cp__container__button"><img class="cp__container__button__icon" src="img/settings.svg"></div>
         </div>
         <div id="cp__options" class="panel cp__container cp__container--scroll">
           <div class="cp__container cp__container--scroll">
-            <div id="cp__options__clone" class="cp__container__button"><img class="cp__container__button__icon" src="img/clone.svg"></div>
-            <div id="cp__options__color" class="cp__container__button"><img class="cp__container__button__icon" src="img/color.svg"><input type="color" id="cp__options__color__input"></div>
+            <div id="cp__options__clone" class="cp__container__button"><img class="cp__container__button__icon"
+                src="img/clone.svg"></div>
+            <div id="cp__options__color" class="cp__container__button"><img class="cp__container__button__icon"
+                src="img/color.svg"><input type="color" id="cp__options__color__input"></div>
           </div>
-          <div id="cp__options__remove" class="cp__container__button"><img class="cp__container__button__icon" src="img/remove.svg"></div>
+          <hr>
+          <div id="cp__options__remove" class="cp__container__button"><img class="cp__container__button__icon"
+              src="img/remove.svg"></div>
         </div>
         <div id="cp__position" class="panel cp__container cp__stats">
-          <h3 class="cp__stats__name">Position:</h3>
+          <h3 class="cp__stats__name">Pos:</h3>
           <h3>X:</h3>
           <h3 id="cp__position__valueX" class="cp__stats__value"></h3>
           <h3>Y:</h3>
@@ -54,41 +64,41 @@
           <h3 class="cp__stats__unit">PX</h3>
         </div>
         <div id="cp__angle" class="panel cp__container cp__stats">
-          <h3 class="cp__stats__name">Rotation:</h3>
+          <h3 class="cp__stats__name">Rot:</h3>
           <h3 id="cp__angle__value" class="cp__stats__value"></h3>
-          <h3 class="cp__stats__unit">Deg</h3>
+          <h3 class="cp__stats__unit">DEG</h3>
         </div>
       </nav>
     </div>
   </div>
   <div id="preview">
     <div class="top">
-      <a id="back" class="button"><img src="img/back.svg" alt="Preview"></a>
+      <a class="preview__back button"><img src="img/back.svg" alt="Preview"></a>
     </div>
     <div class="middle">
       <canvas id="preview__canvas"></canvas>
     </div>
     <div class="bottom">
-      <div class="preview__container preview__container__dimensions">
-        <label>W: <input id="width" type="number" class="preview__container__number-input"> PX</label>
-        <label>H: <input id="height" type="number" class="preview__container__number-input"> PX</label>
+      <div class="preview__dimensions">
+        <label>W: <input id="width" type="number" class="preview__dimensions__number-input"> PX</label>
+        <label>H: <input id="height" type="number" class="preview__dimensions__number-input"> PX</label>
       </div>
-      <div class="preview__container preview__container__formats">
-        <div class="preview__container__labels-list">
-          <label for="png" class="preview__bottom__container__labels-list__label preview__bottom__container__labels-list__label--selected">PNG</label>
-          <label for="jpg" class="preview__bottom__container__labels-list__label">JPG</label>
-          <label for="webp" class="preview__bottom__container__labels-list__label">WEBP</label>
+      <div class="preview__formats">
+        <div class="preview__formats__labels-list">
+          <label for="png"
+            class="preview__formats__labels-list__label preview__formats__labels-list__label--selected">PNG</label>
+          <label for="jpg" class="preview__formats__labels-list__label">JPG</label>
+          <label for="webp" class="preview__formats__labels-list__label">WEBP</label>
         </div>
-        <input type="radio" value="png" name="format" class="preview__container__radio-switch" checked>
-        <input type="radio" value="jpg" name="format" class="preview__container__radio-switch">
-        <input type="radio" value="webp" name="format" class="preview__container__radio-switch">
+        <input type="radio" value="png" name="format" class="preview__formats__radio-switch" checked>
+        <input type="radio" value="jpg" name="format" class="preview__formats__radio-switch">
+        <input type="radio" value="webp" name="format" class="preview__formats__radio-switch">
       </div>
-      <a id="download" class="preview__container">
+      <a class="preview__download">
         Download
       </a>
     </div>
   </div>
-
 
   <!-- Scripts -->
   <script type="text/javascript" src="./main.js"></script>

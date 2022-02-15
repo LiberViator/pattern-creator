@@ -28,7 +28,7 @@ function canvasUpdate() {
   selector.selectorUpdate();
 }
 
-sandbox.addEventListener('load', canvasUpdate);
+body.addEventListener('load', canvasUpdate);
 window.addEventListener('resize', canvasUpdate);
 screen.orientation.addEventListener('change', canvasUpdate);
 

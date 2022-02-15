@@ -28,8 +28,9 @@ function canvasUpdate() {
   selector.selectorUpdate();
 }
 
-window.addEventListener('resize', canvasUpdate);
 window.addEventListener('load', canvasUpdate);
+window.addEventListener('resize', canvasUpdate);
+window.addEventListener('orientationchange', canvasUpdate);
 
 // Constrol Panel
 const ctrlPanel = document.querySelector('#cp');

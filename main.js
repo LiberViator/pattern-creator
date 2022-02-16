@@ -484,12 +484,23 @@ function generateImg() {
   } else {
     document.querySelectorAll('.preview__dimensions__number-input').forEach((e) => (e.classList.add('preview__dimensions__number-input--error')))
   }
-  downloadButton.setAttribute('href', canvas.toDataURL(`image/${document.querySelector('input[name="format"]:checked').value}`));
-  downloadButton.setAttribute('download', `image.${document.querySelector('input[name="format"]:checked').value}`);
+  // downloadButton.setAttribute('href', canvas.toDataURL(`image/${document.querySelector('input[name="format"]:checked').value}`));
+  // downloadButton.setAttribute('download', `image.${document.querySelector('input[name="format"]:checked').value}`);
+}
+
+function download() {
+  var popup = window.open(); 
+  var link = document.createElement('a');
+  link.setAttribute('href', canvas.toDataURL(`image/${document.querySelector('input[name="format"]:checked').value}`));
+  link.setAttribute('download', `image.${document.querySelector('input[name="format"]:checked').value}`);
+  popup.document.body.appendChild(link); 
+  link.click(); 
 }
 
 
-window.onload = function() {
-  body.style.opacity = 1;
-  body.style.transition = '1s opacity';
-}
+downloadButton.addEventListener('click', download);
+
+// window.onload = function() {
+//   body.style.opacity = 1;
+//   body.style.transition = '1s opacity';
+// }
